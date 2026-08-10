@@ -68,6 +68,12 @@ export interface CardSearchQuery {
   costMin?: number;
   costMax?: number;
   traits?: string[];
+  packCode?: string[];
+  unique?: boolean;
+  loyal?: boolean;
+  military?: boolean;
+  intrigue?: boolean;
+  power?: boolean;
   limit?: number;
   offset?: number;
 }

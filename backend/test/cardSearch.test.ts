@@ -33,6 +33,8 @@ async function seed() {
         text: "A noble lord of the North.",
         traitsRaw: "Lord. Stark.",
         traits: ["Lord", "Stark", "QaMarkerLord"],
+        isUnique: true,
+        isLoyal: true,
         deckLimit: 3,
         packCode: "Core",
         position: 1,
@@ -46,6 +48,8 @@ async function seed() {
         text: "The seat of House Stark.",
         traitsRaw: "Stronghold.",
         traits: ["Stronghold", "QaMarkerStronghold"],
+        isUnique: false,
+        isLoyal: false,
         deckLimit: 2,
         packCode: "Core",
         position: 2,
@@ -97,6 +101,20 @@ describe("searchCards", () => {
     const codes = result.items.map((c) => c.code);
     expect(codes).toContain("TEST01");
     expect(codes).toContain("TEST02");
+  });
+
+  it("filters by pack code", async () => {
+    const result = await searchCards({ faction: ["stark"], packCode: ["Core"] });
+    const codes = result.items.map((c) => c.code);
+    expect(codes).toContain("TEST01");
+    expect(codes).toContain("TEST02");
+  });
+
+  it("filters by unique and loyal icons", async () => {
+    const result = await searchCards({ faction: ["stark"], unique: true, loyal: true });
+    const codes = result.items.map((c) => c.code);
+    expect(codes).toContain("TEST01");
+    expect(codes).not.toContain("TEST02");
   });
 
   it("reports total distinct from the page size", async () => {

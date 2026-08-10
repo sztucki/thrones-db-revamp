@@ -10,11 +10,23 @@ const csv = () =>
     .transform((s) => s.split(",").map((v) => v.trim()).filter(Boolean))
     .optional();
 
+const boolFlag = () =>
+  z
+    .string()
+    .transform((s) => s === "1" || s === "true")
+    .optional();
+
 const searchQuerySchema = z.object({
   q: z.string().trim().min(1).optional(),
   faction: csv(),
   type: csv(),
   traits: csv(),
+  packCode: csv(),
+  unique: boolFlag(),
+  loyal: boolFlag(),
+  military: boolFlag(),
+  intrigue: boolFlag(),
+  power: boolFlag(),
   costMin: z.coerce.number().int().min(0).optional(),
   costMax: z.coerce.number().int().min(0).optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),

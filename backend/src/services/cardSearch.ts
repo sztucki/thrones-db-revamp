@@ -9,6 +9,12 @@ export interface CardSearchParams {
   costMin?: number;
   costMax?: number;
   traits?: string[];
+  packCode?: string[];
+  unique?: boolean;
+  loyal?: boolean;
+  military?: boolean;
+  intrigue?: boolean;
+  power?: boolean;
   limit?: number;
   offset?: number;
 }
@@ -53,6 +59,30 @@ export async function searchCards(params: CardSearchParams) {
       sql`, `
     );
     conditions.push(sql`${cards.traits} && ARRAY[${traitValues}]::text[]`);
+  }
+
+  if (params.packCode?.length) {
+    conditions.push(inArray(cards.packCode, params.packCode));
+  }
+
+  if (params.unique) {
+    conditions.push(eq(cards.isUnique, true));
+  }
+
+  if (params.loyal) {
+    conditions.push(eq(cards.isLoyal, true));
+  }
+
+  if (params.military) {
+    conditions.push(eq(cards.isMilitary, true));
+  }
+
+  if (params.intrigue) {
+    conditions.push(eq(cards.isIntrigue, true));
+  }
+
+  if (params.power) {
+    conditions.push(eq(cards.isPower, true));
   }
 
   const where = conditions.length ? and(...conditions) : undefined;

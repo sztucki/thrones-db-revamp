@@ -4,12 +4,14 @@ import type { CardTypeCode } from "@thronesdb/shared";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useTraits } from "../hooks/useTraits.js";
+import { usePacks } from "../hooks/usePacks.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
 import { CompareTray } from "../components/cards/CompareTray.js";
 
 const PAGE_SIZE = 40;
+const ICON_KEYS = ["unique", "loyal", "military", "intrigue", "power"] as const;
 
 export function CardsSearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -28,6 +30,14 @@ export function CardsSearchPage() {
     () => (searchParams.get("traits")?.split(",").filter(Boolean) ?? []),
     [searchParams]
   );
+  const activePacks = useMemo(
+    () => (searchParams.get("packs")?.split(",").filter(Boolean) ?? []),
+    [searchParams]
+  );
+  const activeIcons = useMemo(
+    () => ICON_KEYS.filter((k) => searchParams.get(k) === "1"),
+    [searchParams]
+  );
   const costMin = searchParams.has("costMin") ? Number(searchParams.get("costMin")) : undefined;
   const costMax = searchParams.has("costMax") ? Number(searchParams.get("costMax")) : undefined;
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
@@ -35,11 +45,18 @@ export function CardsSearchPage() {
 
   const factionsQuery = useFactions();
   const traitsQuery = useTraits();
+  const packsQuery = usePacks();
   const searchQuery = useCardSearch({
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
     type: activeTypes.length ? activeTypes : undefined,
     traits: activeTraits.length ? activeTraits : undefined,
+    packCode: activePacks.length ? activePacks : undefined,
+    unique: activeIcons.includes("unique") || undefined,
+    loyal: activeIcons.includes("loyal") || undefined,
+    military: activeIcons.includes("military") || undefined,
+    intrigue: activeIcons.includes("intrigue") || undefined,
+    power: activeIcons.includes("power") || undefined,
     costMin,
     costMax,
     limit: PAGE_SIZE,
@@ -51,6 +68,8 @@ export function CardsSearchPage() {
     faction?: string[];
     type?: CardTypeCode[];
     traits?: string[];
+    packs?: string[];
+    icons?: string[];
     costMin?: number;
     costMax?: number;
     page?: number;
@@ -72,6 +91,16 @@ export function CardsSearchPage() {
       if (next.traits.length) params.set("traits", next.traits.join(","));
       else params.delete("traits");
     }
+    if (next.packs !== undefined) {
+      if (next.packs.length) params.set("packs", next.packs.join(","));
+      else params.delete("packs");
+    }
+    if (next.icons !== undefined) {
+      for (const key of ICON_KEYS) {
+        if (next.icons.includes(key)) params.set(key, "1");
+        else params.delete(key);
+      }
+    }
     if ("costMin" in next) {
       if (next.costMin !== undefined) params.set("costMin", String(next.costMin));
       else params.delete("costMin");
@@ -90,6 +119,8 @@ export function CardsSearchPage() {
       next.faction !== undefined ||
       next.type !== undefined ||
       next.traits !== undefined ||
+      next.packs !== undefined ||
+      next.icons !== undefined ||
       "costMin" in next ||
       "costMax" in next
     ) {
@@ -111,6 +142,16 @@ export function CardsSearchPage() {
   function toggleTrait(trait: string) {
     const has = activeTraits.includes(trait);
     updateParams({ traits: has ? activeTraits.filter((t) => t !== trait) : [...activeTraits, trait] });
+  }
+
+  function togglePack(code: string) {
+    const has = activePacks.includes(code);
+    updateParams({ packs: has ? activePacks.filter((p) => p !== code) : [...activePacks, code] });
+  }
+
+  function toggleIcon(key: string) {
+    const has = activeIcons.includes(key as (typeof ICON_KEYS)[number]);
+    updateParams({ icons: has ? activeIcons.filter((i) => i !== key) : [...activeIcons, key] });
   }
 
   function clearFilters() {
@@ -152,6 +193,11 @@ export function CardsSearchPage() {
         traits={traitsQuery.data?.items ?? []}
         activeTraits={activeTraits}
         onToggleTrait={toggleTrait}
+        packs={packsQuery.data?.items ?? []}
+        activePacks={activePacks}
+        onTogglePack={togglePack}
+        activeIcons={activeIcons}
+        onToggleIcon={toggleIcon}
         onClearFilters={clearFilters}
       />
 

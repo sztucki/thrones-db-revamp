@@ -8,6 +8,7 @@ import { attachUser } from "./middleware/requireAuth.js";
 import { healthRouter } from "./routes/health.js";
 import { cardsRouter } from "./routes/cards.js";
 import { factionsRouter } from "./routes/factions.js";
+import { packsRouter } from "./routes/packs.js";
 import { authRouter } from "./routes/auth.js";
 import { decksRouter } from "./routes/decks.js";
 
@@ -21,6 +22,7 @@ app.use(attachUser);
 app.use("/api", healthRouter);
 app.use("/api", cardsRouter);
 app.use("/api", factionsRouter);
+app.use("/api", packsRouter);
 app.use("/api", authRouter);
 app.use("/api", decksRouter);
 
