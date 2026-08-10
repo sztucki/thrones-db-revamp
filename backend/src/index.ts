@@ -9,6 +9,7 @@ import { healthRouter } from "./routes/health.js";
 import { cardsRouter } from "./routes/cards.js";
 import { factionsRouter } from "./routes/factions.js";
 import { authRouter } from "./routes/auth.js";
+import { decksRouter } from "./routes/decks.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use("/api", healthRouter);
 app.use("/api", cardsRouter);
 app.use("/api", factionsRouter);
 app.use("/api", authRouter);
+app.use("/api", decksRouter);
 
 app.use(errorHandler);
 

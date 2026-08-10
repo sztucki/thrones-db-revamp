@@ -115,3 +115,7 @@ export interface User {
 export interface SessionResponse {
   user: User | null;
 }
+
+export interface DeckDetailResponse extends Deck {
+  legality: import("./legality.js").LegalityResult;
+}

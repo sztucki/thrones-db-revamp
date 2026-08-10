@@ -3,6 +3,7 @@ import {
   index,
   integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
@@ -109,6 +110,37 @@ export const sessions = pgTable("sessions", {
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const decks = pgTable("decks", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  factionCode: text("faction_code")
+    .notNull()
+    .references(() => factions.code),
+  agendaCode: text("agenda_code").references(() => cards.code),
+  format: text("format").notNull().default("joust"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const deckCards = pgTable(
+  "deck_cards",
+  {
+    deckId: text("deck_id")
+      .notNull()
+      .references(() => decks.id, { onDelete: "cascade" }),
+    cardCode: text("card_code")
+      .notNull()
+      .references(() => cards.code),
+    count: integer("count").notNull(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.deckId, table.cardCode] }),
+  })
+);
 
 export const importRuns = pgTable("import_runs", {
   id: text("id").primaryKey(),
