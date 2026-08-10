@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#f0eee9;font-family:'Patrick Hand',cursive}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08)}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 15px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 13px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.6)}
+.dv-card{background:#fff;border:1.5px solid #1a1a1a;box-shadow:2px 3px 0 rgba(0,0,0,.15);overflow:hidden}
+.dv-next{margin:22px 0 0;font:13px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+.wf-frame{width:380px;border:1.5px solid #1a1a1a;background:#fff}
+.wf-chrome{display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1.5px solid #1a1a1a;background:#f4f2ee}
+.wf-dot{width:7px;height:7px;border-radius:50%;border:1px solid #1a1a1a}
+.wf-addr{flex:1;height:14px;border:1px solid #1a1a1a;border-radius:3px;margin-left:6px}
+.wf-lbl{font-size:11px;color:#1a1a1a;text-align:center;margin-top:6px}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t10">
+<div class="dv-thd"><a class="dv-tid" href="#t10">10</a><span class="dv-tname">Higher-fidelity pass on <a class="dv-oid" href="#9b">9b</a> — Rules Reference tab detail</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="10a">
+<div class="dv-olabel"><a class="dv-oid" href="#10a">10a</a>Rules hub with glossary jump-nav</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:460px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 14px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;font-size:12px;">
+<div>Rules</div><div style="font-size:9px;color:#666;">Cards · Decks · Reviews · Rules</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;border-bottom:1.5px solid #1a1a1a;font-size:9px;">
+<div style="padding:6px 10px;border-bottom:2px solid #c0392b;color:#c0392b;">Reference</div>
+<div style="padding:6px 10px;color:#666;">FAQ</div>
+<div style="padding:6px 10px;color:#666;">Draft FAQ</div>
+<div style="padding:6px 10px;color:#666;">Restrictions</div>
+<div style="padding:6px 10px;color:#666;">Tournament Regs</div>
+</div>
+<div style="padding:10px 14px;border-bottom:1px solid #ccc;">
+<div style="border:1.5px solid #1a1a1a;border-radius:12px;padding:5px 10px;font-size:10px;">Search glossary terms…</div>
+</div>
+<div style="padding:8px 14px;border-bottom:1px solid #ccc;display:flex;gap:4px;flex-wrap:wrap;font-size:8px;">
+<div style="color:#c0392b;">A</div><div>B</div><div>C</div><div>D</div><div>E</div><div>F</div><div>G</div><div>...</div><div>W</div>
+</div>
+<div style="display:flex;">
+<div style="width:100px;border-right:1px solid #1a1a1a;padding:10px 8px;font-size:9px;display:flex;flex-direction:column;gap:5px;">
+<div style="font-weight:bold;color:#c0392b;">A</div>
+<div style="padding-left:4px;">Abilities</div>
+<div style="padding-left:4px;">Actions</div>
+<div style="padding-left:4px;">Active Player</div>
+<div style="padding-left:4px;">Agenda Cards</div>
+<div style="padding-left:4px;">Ambush (X)</div>
+<div style="font-weight:bold;color:#666;margin-top:4px;">B</div>
+<div style="padding-left:4px;color:#666;">Base Value</div>
+</div>
+<div style="flex:1;padding:10px;font-size:9px;">
+<div style="font-size:11px;font-weight:bold;margin-bottom:4px;">Abilities</div>
+<div style="color:#444;margin-bottom:6px;">An ability is the special game text that a card contributes to the game...</div>
+<div style="border-left:2px solid #c0392b;padding-left:6px;color:#444;font-size:8px;">The initiation of action, interrupt, and reaction abilities is optional...</div>
+<div style="margin-top:8px;font-size:8px;color:#666;">Related: Actions · Effects · Costs</div>
+</div>
+</div>
+<div style="padding:8px 14px;border-top:1px solid #1a1a1a;font-size:9px;color:#666;">Appendix I: Timing chart · Appendix II: Cardtype anatomy</div>
+</div>
+<div class="wf-lbl">A–Z jump list + search narrows the glossary · content pane on the right, appendices linked at the bottom</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "build this out as the real HTML page" · "make the A–Z list sticky while scrolling" · "add the timing chart appendix as its own view"</p>
+</section>
+<section class="dv-turn" id="t9">
+<div class="dv-thd"><a class="dv-tid" href="#t9">9</a><span class="dv-tname">Rules hub page — 4 approaches</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="9a">
+<div class="dv-olabel"><a class="dv-oid" href="#9a">9a</a>Simple link cards</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:360px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1px solid #1a1a1a;font-size:12px;">Rules</div>
+<div style="padding:12px;display:flex;flex-direction:column;gap:8px;">
+<div style="border:1px solid #1a1a1a;padding:10px;font-size:11px;">Rules Reference<div style="font-size:8px;color:#666;">Full card-by-card rulings text</div></div>
+<div style="border:1px solid #1a1a1a;padding:10px;font-size:11px;">F.A.Q.<div style="font-size:8px;color:#666;">Common questions, answered</div></div>
+<div style="border:1px solid #1a1a1a;padding:10px;font-size:11px;">Draft F.A.Q.</div>
+<div style="border:1px solid #1a1a1a;padding:10px;font-size:11px;">Restricted &amp; Banned Cards</div>
+<div style="border:1px solid #1a1a1a;padding:10px;font-size:11px;">Tournament Regulations</div>
+</div>
+</div>
+<div class="wf-lbl">One landing page, each doc is its own link/card</div>
+</div>
+</div>
+
+<div class="dv-opt" id="9b">
+<div class="dv-olabel"><a class="dv-oid" href="#9b">9b</a>Tabbed single page</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1px solid #1a1a1a;font-size:12px;">Rules</div>
+<div style="display:flex;flex-wrap:wrap;border-bottom:1.5px solid #1a1a1a;font-size:9px;">
+<div style="padding:6px 10px;border-bottom:2px solid #c0392b;color:#c0392b;">Reference</div>
+<div style="padding:6px 10px;color:#666;">FAQ</div>
+<div style="padding:6px 10px;color:#666;">Draft FAQ</div>
+<div style="padding:6px 10px;color:#666;">Restrictions</div>
+<div style="padding:6px 10px;color:#666;">Tournament Regs</div>
+</div>
+<div style="padding:12px;font-size:9px;color:#444;">
+<div style="border-bottom:1px solid #eee;height:8px;margin-bottom:5px;"></div>
+<div style="border-bottom:1px solid #eee;height:8px;margin-bottom:5px;"></div>
+<div style="height:8px;width:70%;"></div>
+</div>
+</div>
+<div class="wf-lbl">Everything lives on one URL, switch via tabs</div>
+</div>
+</div>
+
+<div class="dv-opt" id="9c">
+<div class="dv-olabel"><a class="dv-oid" href="#9c">9c</a>Persistent sidebar nav</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;">
+<div style="width:110px;border-right:1px solid #1a1a1a;padding:10px 8px;font-size:9px;display:flex;flex-direction:column;gap:8px;">
+<div style="color:#c0392b;">Rules Reference</div>
+<div>F.A.Q.</div>
+<div>Draft F.A.Q.</div>
+<div>Restrictions</div>
+<div>Tournament Regs</div>
+</div>
+<div style="flex:1;padding:10px;font-size:9px;color:#444;">
+<div style="border-bottom:1px solid #eee;height:8px;margin-bottom:5px;"></div>
+<div style="border-bottom:1px solid #eee;height:8px;margin-bottom:5px;"></div>
+<div style="border-bottom:1px solid #eee;height:8px;margin-bottom:5px;"></div>
+<div style="height:8px;width:60%;"></div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Nav stays visible while reading — good for long reference docs</div>
+</div>
+</div>
+
+<div class="dv-opt" id="9d">
+<div class="dv-olabel"><a class="dv-oid" href="#9d">9d</a>Search-first</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:360px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:20px 14px;text-align:center;border-bottom:1px solid #1a1a1a;">
+<div style="font-size:12px;margin-bottom:10px;">Search the rules…</div>
+<div style="border:1.5px solid #1a1a1a;border-radius:16px;height:22px;width:80%;margin:0 auto;"></div>
+</div>
+<div style="padding:12px;display:flex;flex-wrap:wrap;gap:6px;font-size:9px;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 8px;">Rules Reference</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 8px;">F.A.Q.</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 8px;">Draft F.A.Q.</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 8px;">Restrictions</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 8px;">Tournament Regs</div>
+</div>
+</div>
+<div class="wf-lbl">Keyword search across all rules docs, quick links below as fallback</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#9c">9c</a>" · "combine <a class="dv-oid" href="#9d">9d</a>'s search with <a class="dv-oid" href="#9c">9c</a>'s sidebar" · "high fidelity pass"</p>
+</section>
+<section class="dv-turn" id="t8">
+<div class="dv-thd"><a class="dv-tid" href="#t8">8</a><span class="dv-tname">Higher-fidelity pass on <a class="dv-oid" href="#7a">7a</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="8a">
+<div class="dv-olabel"><a class="dv-oid" href="#8a">8a</a>Reviews feed + card Rulings tab</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:460px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #1a1a1a;">
+<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border:1.5px solid #1a1a1a;border-radius:50%;"></div><div style="font-size:14px;">ThronesDB</div></div>
+<div style="display:flex;gap:10px;font-size:11px;"><div>Cards</div><div>Decks</div><div style="color:#c0392b;">Reviews</div><div>Rules</div></div>
+</div>
+<div style="padding:10px 14px;border-bottom:1px solid #ccc;font-size:13px;">Card Reviews</div>
+<div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+<div style="border:1px solid #1a1a1a;padding:10px;">
+<div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:6px;">
+<div style="width:30px;height:40px;border:1px solid #1a1a1a;flex:none;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="flex:1;">
+<div style="font-size:11px;">Armed to the Teeth</div>
+<div style="font-size:9px;color:#666;">Rules FAQ · 5 notes · Mar 27, 2026</div>
+</div>
+</div>
+<div style="border-left:2px solid #c0392b;padding-left:8px;font-size:9px;color:#444;display:flex;flex-direction:column;gap:4px;">
+<div>If more than one agenda has "after all agendas are announced" timing, resolve in player order.</div>
+<div>The word "different" means different by title...</div>
+<div style="color:#c0392b;">▾ show 3 more</div>
+</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:10px;">
+<div style="display:flex;gap:10px;align-items:flex-start;">
+<div style="width:30px;height:40px;border:1px solid #1a1a1a;flex:none;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="flex:1;">
+<div style="font-size:11px;">The Age of Heroes</div>
+<div style="font-size:9px;color:#666;">Rules FAQ · 2 notes · Mar 27, 2026</div>
+</div>
+<div style="font-size:9px;color:#999;">▸</div>
+</div>
+</div>
+<div style="text-align:center;font-size:9px;color:#666;">‹ Page 1 of 10 ›</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #ccc;">
+<div style="font-size:12px;">Direwolf</div>
+<div style="font-size:9px;color:#666;">Attachment · cost 2 · Stark</div>
+</div>
+<div style="display:flex;gap:0;border-bottom:1.5px solid #1a1a1a;font-size:10px;">
+<div style="padding:6px 12px;color:#666;">Overview</div>
+<div style="padding:6px 12px;border-bottom:2px solid #c0392b;color:#c0392b;">Rulings (3)</div>
+<div style="padding:6px 12px;color:#666;">Decks with this card</div>
+</div>
+<div style="padding:12px;font-size:9px;color:#444;display:flex;flex-direction:column;gap:8px;">
+<div style="border-bottom:1px solid #eee;padding-bottom:6px;">You may attach Direwolf to a character who already has an attachment of the same type; the older one is discarded.</div>
+<div style="border-bottom:1px solid #eee;padding-bottom:6px;">If the attached character leaves play, Direwolf is discarded as a state-based action.</div>
+<div>Direwolf does not trigger "enters play" abilities a second time if it changes control.</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Feed: thumbnail + note count + expandable FAQ · card page: Rulings tab with full history</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "build this out as the real HTML page" · "add a like/upvote on each ruling" · "link straight from search results to the Rulings tab"</p>
+</section>
+<section class="dv-turn" id="t7">
+<div class="dv-thd"><a class="dv-tid" href="#t7">7</a><span class="dv-tname">Reviews/FAQ feed + per-card rulings — 4 approaches</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="7a">
+<div class="dv-olabel"><a class="dv-oid" href="#7a">7a</a>Expandable feed cards + Rulings tab on card</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1px solid #1a1a1a;font-size:12px;">Rulings &amp; FAQ</div>
+<div style="padding:10px 12px;display:flex;flex-direction:column;gap:8px;">
+<div style="border:1px solid #1a1a1a;padding:8px;">
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+<div style="width:26px;height:34px;border:1px solid #1a1a1a;flex:none;"></div>
+<div style="font-size:11px;">Armed to the Teeth</div>
+</div>
+<div style="font-size:9px;color:#666;">▾ 2 ruling notes</div>
+<div style="border-left:2px solid #c0392b;padding-left:6px;margin-top:4px;font-size:8px;color:#444;">If more than one agenda has "after all agendas..." — resolve in player order.</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:8px;">
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;">
+<div style="width:26px;height:34px;border:1px solid #1a1a1a;flex:none;"></div>
+<div style="font-size:11px;">The Age of Heroes</div>
+</div>
+<div style="font-size:9px;color:#666;">▸ 1 ruling note (collapsed)</div>
+</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;font-size:11px;">Card: Direwolf</div>
+<div style="display:flex;gap:0;border-bottom:1.5px solid #1a1a1a;font-size:9px;">
+<div style="padding:5px 10px;color:#666;">Details</div>
+<div style="padding:5px 10px;border-bottom:2px solid #c0392b;color:#c0392b;">Rulings (3)</div>
+<div style="padding:5px 10px;color:#666;">Decks using this</div>
+</div>
+<div style="padding:10px;font-size:8px;color:#444;">
+<div style="border-bottom:1px solid #eee;padding-bottom:6px;margin-bottom:6px;">You may attach Direwolf to a character who already has an attachment...</div>
+<div>If the attached character leaves play, Direwolf is discarded.</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Feed entries expand in place · card page gets a Rulings tab</div>
+</div>
+</div>
+
+<div class="dv-opt" id="7b">
+<div class="dv-olabel"><a class="dv-oid" href="#7b">7b</a>Compact scannable list + inline FAQ on card</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1px solid #1a1a1a;font-size:12px;">Rulings &amp; FAQ</div>
+<div style="padding:6px 12px;display:flex;flex-direction:column;">
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:10px;">
+<span>Armed to the Teeth</span><span style="color:#666;">Mar 27</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:10px;">
+<span>The Age of Heroes</span><span style="color:#666;">Mar 27</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:10px;">
+<span>"Widow's Ford"</span><span style="color:#666;">Mar 27</span>
+</div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:10px;">
+<span>Elder Brother</span><span style="color:#666;">Mar 27</span>
+</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:10px;display:flex;gap:10px;">
+<div style="width:60px;height:80px;border:1px solid #1a1a1a;flex:none;"></div>
+<div style="font-size:9px;">
+<div style="font-size:11px;margin-bottom:4px;">Direwolf</div>
+<div style="color:#666;">Attachment · cost 2</div>
+</div>
+</div>
+<div style="padding:0 10px 10px;border-top:1px solid #ccc;padding-top:8px;">
+<div style="font-size:9px;font-weight:bold;margin-bottom:4px;">FAQ</div>
+<div style="font-size:8px;color:#444;">Always visible below the card, no extra click needed.</div>
+</div>
+</div>
+<div class="wf-lbl">List is title+date only, click to open · card FAQ always shown, no tab</div>
+</div>
+</div>
+
+<div class="dv-opt" id="7c">
+<div class="dv-olabel"><a class="dv-oid" href="#7c">7c</a>Grouped by set + FAQ popover in search</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1px solid #1a1a1a;font-size:12px;">Rulings &amp; FAQ</div>
+<div style="padding:10px 12px;">
+<div style="font-size:10px;font-weight:bold;margin-bottom:6px;">▾ Nights Charred Bones</div>
+<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px;">
+<div style="border:1px solid #1a1a1a;padding:5px;font-size:9px;">Armed to the Teeth</div>
+<div style="border:1px solid #1a1a1a;padding:5px;font-size:9px;">The Age of Heroes</div>
+</div>
+<div style="font-size:10px;color:#666;">▸ For Family Honor (collapsed)</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:10px;font-size:9px;">Search results</div>
+<div style="padding:0 10px 10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+<div style="border:1px solid #1a1a1a;height:50px;position:relative;">
+<div style="position:absolute;top:2px;right:2px;width:12px;height:12px;border:1px solid #c0392b;border-radius:50%;color:#c0392b;font-size:8px;text-align:center;">i</div>
+</div>
+<div style="border:1px solid #1a1a1a;height:50px;"></div>
+<div style="border:1px solid #1a1a1a;height:50px;"></div>
+</div>
+<div style="margin:0 10px;border:1.5px dashed #c0392b;font-size:8px;color:#c0392b;padding:5px;">Popover on hover/click of "i" — no page navigation</div>
+</div>
+<div class="wf-lbl">Feed grouped by set · FAQ surfaces as a quick popover right in search results</div>
+</div>
+</div>
+
+<div class="dv-opt" id="7d">
+<div class="dv-olabel"><a class="dv-oid" href="#7d">7d</a>Filterable feed (search-page pattern) + Rulings sub-page</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;">
+<div style="width:90px;border-right:1px solid #1a1a1a;padding:10px 8px;font-size:9px;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:3px 6px;margin-bottom:6px;">Search…</div>
+<div>▸ Faction</div><div>▸ Set</div>
+</div>
+<div style="flex:1;padding:10px;font-size:9px;display:flex;flex-direction:column;gap:6px;">
+<div style="border:1px solid #1a1a1a;padding:5px;">Armed to the Teeth</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">The Age of Heroes</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">"Widow's Ford"</div>
+</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;font-size:11px;">thronesdb.com/card/26120/rulings</div>
+<div style="padding:10px;font-size:9px;">
+<div style="margin-bottom:6px;">Direwolf — full ruling history</div>
+<div style="border-left:2px solid #c0392b;padding-left:6px;font-size:8px;color:#444;">Dedicated page, same filter pattern as card search, linked from the card itself.</div>
+</div>
+</div>
+<div class="wf-lbl">Same filter chrome as Cards search, for consistency · rulings get their own URL/page</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#7a">7a</a>" · "combine <a class="dv-oid" href="#7b">7b</a>'s always-visible FAQ with <a class="dv-oid" href="#7d">7d</a>'s dedicated page" · "high fidelity pass"</p>
+</section>
+<section class="dv-turn" id="t6">
+<div class="dv-thd"><a class="dv-tid" href="#t6">6</a><span class="dv-tname">Higher-fidelity pass on <a class="dv-oid" href="#5a">5a</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="6a">
+<div class="dv-olabel"><a class="dv-oid" href="#6a">6a</a>Create/Edit Deck</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:480px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #1a1a1a;">
+<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border:1.5px solid #1a1a1a;border-radius:50%;"></div><div style="font-size:14px;">ThronesDB</div></div>
+<div style="display:flex;gap:10px;font-size:11px;"><div>Cards</div><div style="color:#c0392b;">Decks</div><div>Community</div></div>
+</div>
+<div style="padding:24px 20px;text-align:center;">
+<div style="font-size:13px;margin-bottom:4px;">New Deck</div>
+<div style="font-size:9px;color:#666;margin-bottom:18px;">Step 1 of 2 — choose your house</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:6px;">
+<div style="border:1.5px solid #c0392b;border-radius:6px;padding:8px 4px;font-size:9px;"><div style="width:22px;height:22px;border:1px solid #1a1a1a;border-radius:50%;margin:0 auto 5px;"></div>Stark</div>
+<div style="border:1px solid #1a1a1a;border-radius:6px;padding:8px 4px;font-size:9px;"><div style="width:22px;height:22px;border:1px solid #1a1a1a;border-radius:50%;margin:0 auto 5px;"></div>Lannister</div>
+<div style="border:1px solid #1a1a1a;border-radius:6px;padding:8px 4px;font-size:9px;"><div style="width:22px;height:22px;border:1px solid #1a1a1a;border-radius:50%;margin:0 auto 5px;"></div>Targaryen</div>
+<div style="border:1px solid #1a1a1a;border-radius:6px;padding:8px 4px;font-size:9px;"><div style="width:22px;height:22px;border:1px solid #1a1a1a;border-radius:50%;margin:0 auto 5px;"></div>Night's Watch</div>
+</div>
+<div style="font-size:8px;color:#999;">(+4 more houses, scroll)</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:0;"></div>
+<div style="padding:24px 20px;text-align:center;">
+<div style="font-size:9px;color:#666;margin-bottom:14px;">Step 2 of 2 — choose an agenda (optional)</div>
+<div style="display:flex;gap:10px;justify-content:center;margin-bottom:10px;">
+<div style="border:1.5px solid #c0392b;border-radius:6px;padding:6px;width:70px;">
+<div style="height:36px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:8px;">Alliance</div>
+</div>
+<div style="border:1px solid #1a1a1a;border-radius:6px;padding:6px;width:70px;">
+<div style="height:36px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:8px;">Banner of the Stag</div>
+</div>
+<div style="border:1px dashed #1a1a1a;border-radius:6px;padding:6px;width:70px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#999;">None</div>
+</div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;border-radius:6px;font-size:10px;padding:6px 18px;display:inline-block;">Start building →</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;width:480px;">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #ccc;">
+<div style="font-size:13px;">Stark Aggro — v3</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<div style="font-size:10px;color:#666;">Autosaved 12s ago</div>
+<div style="border:1px solid #999;color:#666;font-size:11px;padding:4px 10px;">Cancel</div>
+<div style="border:1.5px solid #1a1a1a;font-size:11px;padding:4px 10px;">Save</div>
+</div>
+</div>
+<div style="display:flex;padding-top:10px;">
+<div style="flex:1.3;padding:12px;border-right:1.5px solid #1a1a1a;">
+<div style="border:1.5px solid #1a1a1a;border-radius:12px;padding:5px 10px;font-size:10px;margin-bottom:8px;">Search text…</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Faction: Stark</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Type ▾</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Cost ▾</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Robb Stark</div><div style="font-size:8px;color:#666;">Character · 5</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Catelyn Stark</div><div style="font-size:8px;color:#666;">Character · 3</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Winterfell</div><div style="font-size:8px;color:#666;">Location · 3</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Direwolf</div><div style="font-size:8px;color:#666;">Attachment · 2</div>
+</div>
+</div>
+</div>
+<div style="flex:1;padding:12px;background:#faf8f5;">
+<div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:10px;">
+<div style="color:#c0392b;font-weight:bold;">62 / 60 cards</div><div style="color:#666;">Stark</div>
+</div>
+<div style="border:1px solid #1a1a1a;border-radius:6px;padding:8px;margin-bottom:12px;">
+<div style="font-size:9px;font-weight:bold;margin-bottom:5px;">Tournament Legality</div>
+<div style="display:grid;grid-template-columns:1.4fr 0.7fr 0.7fr;row-gap:3px;font-size:9px;">
+<div></div><div style="color:#666;">Joust</div><div style="color:#666;">Melee</div>
+<div>Standard v2.1</div><div>✓</div><div>✓</div>
+<div>Valyrian v1.0</div><div>✓</div><div>✗</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:3px;font-size:9px;margin-bottom:10px;">
+<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:2px 0;"><span>Eddard Stark</span><span>x2</span></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:2px 0;"><span>Robb Stark</span><span>x1</span></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:2px 0;"><span>Winterfell</span><span>x2</span></div>
+<div style="display:flex;justify-content:space-between;border-bottom:1px solid #ddd;padding:2px 0;"><span>Direwolf</span><span>x3</span></div>
+<div style="display:flex;justify-content:space-between;padding:2px 0;color:#999;"><span>… 24 more rows</span><span></span></div>
+</div>
+<div style="font-size:9px;color:#666;margin-bottom:4px;">Cost curve</div>
+<div style="font-size:14px;letter-spacing:1px;margin-bottom:10px;">▁▂▅▇▅▃▁</div>
+<div style="border:1px solid #1a1a1a;border-radius:4px;font-size:9px;padding:5px;text-align:center;color:#666;">2 deckbuilding warnings ▾</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Autosave state, active filter chips, running count + warnings — search and list always paired</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "build this out as the real HTML page" · "show the deckbuilding warnings expanded" · "tweak the curve chart"</p>
+</section>
+<section class="dv-turn" id="t5">
+<div class="dv-thd"><a class="dv-tid" href="#t5">5</a><span class="dv-tname">Create/Edit Deck page — 4 approaches</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="5a">
+<div class="dv-olabel"><a class="dv-oid" href="#5a">5a</a>Split: search left, deck slots right</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:400px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;font-size:11px;">
+<div>Stark Aggro — v3</div><div style="border:1px solid #1a1a1a;padding:2px 8px;">Save</div>
+</div>
+<div style="display:flex;">
+<div style="flex:1.3;padding:10px;border-right:1.5px solid #1a1a1a;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;height:18px;margin-bottom:6px;"></div>
+<div style="font-size:9px;margin-bottom:6px;">▸ Faction ▸ Type ▸ Cost (collapsed)</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+<div style="border:1px solid #1a1a1a;height:46px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:46px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:46px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:46px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+</div>
+<div style="flex:1;padding:10px;background:#faf8f5;">
+<div style="font-size:9px;color:#c0392b;margin-bottom:6px;">62/60 cards</div>
+<div style="display:flex;justify-content:space-between;border:1px solid #1a1a1a;padding:3px 5px;font-size:9px;margin-bottom:3px;"><span>Eddard Stark</span><span>x2</span></div>
+<div style="display:flex;justify-content:space-between;border:1px solid #1a1a1a;padding:3px 5px;font-size:9px;margin-bottom:3px;"><span>Winterfell</span><span>x1</span></div>
+<div style="display:flex;justify-content:space-between;border:1px dashed #1a1a1a;padding:3px 5px;font-size:9px;"><span>Direwolf</span><span>x3</span></div>
+<div style="margin-top:8px;font-size:8px;color:#666;">Curve: ▁▃▅▇▃▁</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Click a card to add — deck list always visible alongside search</div>
+</div>
+</div>
+
+<div class="dv-opt" id="5b">
+<div class="dv-olabel"><a class="dv-oid" href="#5b">5b</a>Tabbed builder (Cards / Agenda / Stats)</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;font-size:11px;">Stark Aggro — v3 · 62 cards</div>
+<div style="display:flex;gap:0;border-bottom:1.5px solid #1a1a1a;font-size:10px;">
+<div style="padding:6px 12px;border-bottom:2px solid #c0392b;color:#c0392b;">Cards</div>
+<div style="padding:6px 12px;color:#666;">Agenda &amp; Plots</div>
+<div style="padding:6px 12px;color:#666;">Stats</div>
+</div>
+<div style="padding:10px;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;height:18px;margin-bottom:8px;"></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+<div style="margin-top:8px;font-size:9px;color:#666;">Deck list drawer collapses to bottom sheet ▾</div>
+</div>
+</div>
+<div class="wf-lbl">One thing at a time — good on narrower screens</div>
+</div>
+</div>
+
+<div class="dv-opt" id="5c">
+<div class="dv-olabel"><a class="dv-oid" href="#5c">5c</a>Three columns: filters / results / deck+stats</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:420px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:8px 12px;border-bottom:1px solid #1a1a1a;font-size:11px;">Stark Aggro — v3</div>
+<div style="display:flex;">
+<div style="width:90px;border-right:1px solid #1a1a1a;padding:8px;font-size:9px;">
+<div>▾ Faction</div><div style="padding-left:4px;">☑ Stark</div>
+<div>▸ Type</div><div>▸ Cost</div>
+</div>
+<div style="flex:1;border-right:1.5px solid #1a1a1a;padding:8px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+</div>
+<div style="width:110px;padding:8px;background:#faf8f5;font-size:9px;">
+<div style="margin-bottom:4px;">62/60 cards</div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:3px;"></div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:3px;"></div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:6px;"></div>
+<div style="color:#666;">Curve ▁▃▅▇▃▁</div>
+<div style="color:#666;">Factions: Stark</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Filters, results and deck+stats all visible at once — most info-dense</div>
+</div>
+</div>
+
+<div class="dv-opt" id="5d">
+<div class="dv-olabel"><a class="dv-oid" href="#5d">5d</a>Stacked: deck bar pinned top, search below</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 12px;border-bottom:1.5px solid #c0392b;background:#fdf3f1;">
+<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span>Stark Aggro — v3</span><span style="color:#c0392b;">62/60 cards</span></div>
+<div style="font-size:8px;color:#666;">Curve ▁▃▅▇▃▁ · Factions: Stark</div>
+</div>
+<div style="padding:10px;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;height:18px;margin-bottom:6px;"></div>
+<div style="font-size:9px;margin-bottom:6px;">▸ Faction ▸ Type ▸ Cost (collapsed)</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Deck progress always visible up top while you search below</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#5a">5a</a>, higher fidelity" · "combine <a class="dv-oid" href="#5c">5c</a>'s stats sidebar with <a class="dv-oid" href="#5a">5a</a>'s layout" · "make it work well on mobile too"</p>
+</section>
+<section class="dv-turn" id="t4">
+<div class="dv-thd"><a class="dv-tid" href="#t4">4</a><span class="dv-tname">Higher-fidelity pass on <a class="dv-oid" href="#3d">3d</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="4a">
+<div class="dv-olabel"><a class="dv-oid" href="#4a">4a</a>My Decks</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:460px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #1a1a1a;">
+<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border:1.5px solid #1a1a1a;border-radius:50%;"></div><div style="font-size:14px;">ThronesDB</div></div>
+<div style="display:flex;gap:10px;font-size:11px;"><div>Cards</div><div style="color:#c0392b;">Decks</div><div>Community</div><div style="border:1px solid #1a1a1a;border-radius:50%;width:20px;height:20px;"></div></div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #ccc;">
+<div style="font-size:13px;">My Decks <span style="color:#666;font-size:11px;">(14)</span></div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:11px;padding:5px 10px;">+ New deck</div>
+</div>
+<div style="display:flex;">
+<div style="width:120px;border-right:1px solid #1a1a1a;padding:12px 10px;font-size:10px;display:flex;flex-direction:column;gap:8px;">
+<div>
+<div style="font-weight:bold;margin-bottom:3px;">▾ Faction</div>
+<div style="padding-left:4px;">☑ Stark</div><div style="padding-left:4px;">☐ Lannister</div><div style="padding-left:4px;">☐ Targaryen</div><div style="padding-left:4px;">☐ Night's Watch</div>
+</div>
+<div>
+<div style="font-weight:bold;margin-bottom:3px;">▸ Format</div>
+</div>
+<div>
+<div style="font-weight:bold;margin-bottom:3px;">▸ Status</div>
+</div>
+<div style="color:#c0392b;">Clear filters</div>
+</div>
+<div style="flex:1;padding:12px;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:10px;">
+<div style="color:#c0392b;">4 decks — filtered to Stark</div>
+<div style="color:#666;">Sort: Recently edited ▾</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+<div style="border:1.5px solid #c0392b;padding:0;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;">
+<div style="font-size:11px;">Stark Aggro — v3</div>
+<div style="font-size:9px;color:#666;">62 cards · edited 2d ago</div>
+</div>
+</div>
+<div style="border:1px solid #1a1a1a;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;">
+<div style="font-size:11px;">Stark Rush</div>
+<div style="font-size:9px;color:#666;">60 cards · edited 1w ago</div>
+</div>
+</div>
+<div style="border:1px solid #1a1a1a;">
+<div style="height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;">
+<div style="font-size:11px;">Winterfell Turtle</div>
+<div style="font-size:9px;color:#666;">63 cards · edited 3w ago</div>
+</div>
+</div>
+<div style="border:1px dashed #1a1a1a;display:flex;align-items:center;justify-content:center;font-size:16px;color:#999;height:66px;">+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Faction filter applied, live count in header — same pattern as card search</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "build this out as the real HTML page" · "tweak the deck card layout" · "add a grid/list view toggle"</p>
+</section>
+<section class="dv-turn" id="t3">
+<div class="dv-thd"><a class="dv-tid" href="#t3">3</a><span class="dv-tname">My Decks page — 4 approaches</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="3a">
+<div class="dv-olabel"><a class="dv-oid" href="#3a">3a</a>Visual deck grid</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 14px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13px;">My Decks</div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:11px;padding:4px 8px;">+ New deck</div>
+</div>
+<div style="padding:10px 14px;display:flex;gap:8px;font-size:10px;border-bottom:1px solid #ccc;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:2px 8px;">All factions ▾</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;padding:2px 8px;">Sort: recent ▾</div>
+</div>
+<div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+<div style="border:1px solid #1a1a1a;">
+<div style="height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;font-size:10px;">Stark Aggro<div style="color:#666;font-size:9px;">62 cards</div></div>
+</div>
+<div style="border:1px solid #1a1a1a;">
+<div style="height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;font-size:10px;">NW Control<div style="color:#666;font-size:9px;">60 cards</div></div>
+</div>
+<div style="border:1px solid #1a1a1a;">
+<div style="height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);border-bottom:1px solid #1a1a1a;"></div>
+<div style="padding:6px;font-size:10px;">Lannister Eco<div style="color:#666;font-size:9px;">61 cards</div></div>
+</div>
+<div style="border:1px dashed #1a1a1a;display:flex;align-items:center;justify-content:center;font-size:18px;color:#999;">+</div>
+</div>
+</div>
+<div class="wf-lbl">Thumbnail-first, good for quickly recognising decks visually</div>
+</div>
+</div>
+
+<div class="dv-opt" id="3b">
+<div class="dv-olabel"><a class="dv-oid" href="#3b">3b</a>Dense table</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 14px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13px;">My Decks (14)</div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:11px;padding:4px 8px;">+ New deck</div>
+</div>
+<div style="padding:10px 14px;">
+<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2px;font-size:9px;border:1px solid #1a1a1a;">
+<div style="border-bottom:1px solid #1a1a1a;padding:4px;">Name ↕</div><div style="border-bottom:1px solid #1a1a1a;padding:4px;">Faction</div><div style="border-bottom:1px solid #1a1a1a;padding:4px;">Cards</div><div style="border-bottom:1px solid #1a1a1a;padding:4px;">Edited</div>
+<div style="padding:4px;background:#f7f5f1;">Stark Aggro</div><div style="padding:4px;background:#f7f5f1;height:7px;"></div><div style="padding:4px;background:#f7f5f1;">62</div><div style="padding:4px;background:#f7f5f1;">2d ago</div>
+<div style="padding:4px;">NW Control</div><div style="padding:4px;height:7px;"></div><div style="padding:4px;">60</div><div style="padding:4px;">1w ago</div>
+<div style="padding:4px;background:#f7f5f1;">Lannister Eco</div><div style="padding:4px;background:#f7f5f1;height:7px;"></div><div style="padding:4px;background:#f7f5f1;">61</div><div style="padding:4px;background:#f7f5f1;">2w ago</div>
+<div style="padding:4px;">Targ Burn</div><div style="padding:4px;height:7px;"></div><div style="padding:4px;">58</div><div style="padding:4px;">3w ago</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Sortable columns, scans fast when you have many decks</div>
+</div>
+</div>
+
+<div class="dv-opt" id="3c">
+<div class="dv-olabel"><a class="dv-oid" href="#3c">3c</a>Grouped by faction</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 14px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13px;">My Decks</div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:11px;padding:4px 8px;">+ New deck</div>
+</div>
+<div style="padding:12px 14px;">
+<div style="font-size:11px;margin-bottom:6px;">▾ Stark (2)</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;">
+<div style="border:1px solid #1a1a1a;width:90px;height:50px;"></div>
+<div style="border:1px solid #1a1a1a;width:90px;height:50px;"></div>
+</div>
+<div style="font-size:11px;margin-bottom:6px;">▾ Lannister (1)</div>
+<div style="display:flex;gap:8px;margin-bottom:12px;">
+<div style="border:1px solid #1a1a1a;width:90px;height:50px;"></div>
+</div>
+<div style="font-size:11px;color:#666;">▸ Targaryen (3)</div>
+</div>
+</div>
+<div class="wf-lbl">Collapsible faction sections, useful once decks pile up</div>
+</div>
+</div>
+
+<div class="dv-opt" id="3d">
+<div class="dv-olabel"><a class="dv-oid" href="#3d">3d</a>Sidebar filters + grid</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:380px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:10px 14px;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13px;">My Decks</div>
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:11px;padding:4px 8px;">+ New deck</div>
+</div>
+<div style="display:flex;">
+<div style="width:90px;border-right:1px solid #1a1a1a;padding:10px 8px;font-size:9px;display:flex;flex-direction:column;gap:6px;">
+<div>▾ Faction</div>
+<div style="padding-left:4px;">☑ Stark</div><div style="padding-left:4px;">☐ Lannister</div>
+<div>▸ Format</div>
+<div>▸ Status</div>
+</div>
+<div style="flex:1;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+<div style="border:1px solid #1a1a1a;height:54px;"></div>
+<div style="border:1px solid #1a1a1a;height:54px;"></div>
+<div style="border:1px solid #1a1a1a;height:54px;"></div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Same filter pattern as the card search, for consistency</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#3a">3a</a>, do a higher-fidelity pass" · "combine <a class="dv-oid" href="#3b">3b</a>'s table with <a class="dv-oid" href="#3d">3d</a>'s filters" · "start the deck builder/editor screen"</p>
+</section>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Higher-fidelity pass on <a class="dv-oid" href="#1a">1a</a></span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Home</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:460px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #1a1a1a;">
+<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border:1.5px solid #1a1a1a;border-radius:50%;"></div><div style="font-size:14px;">ThronesDB</div></div>
+<div style="display:flex;gap:10px;font-size:11px;"><div>Cards</div><div>Decks</div><div>Community</div><div style="border:1px solid #1a1a1a;border-radius:50%;width:20px;height:20px;"></div></div>
+</div>
+<div style="padding:14px;border-bottom:1px solid #ccc;">
+<div style="font-size:12px;color:#666;margin-bottom:6px;">Continue where you left off</div>
+<div style="border:1.5px solid #c0392b;display:flex;align-items:center;gap:10px;padding:8px;">
+<div style="width:6px;height:34px;background:#c0392b;flex:none;"></div>
+<div style="flex:1;"><div style="font-size:13px;">Stark Aggro — v3</div><div style="font-size:10px;color:#666;">62 cards · edited 2 days ago</div></div>
+<div style="border:1px solid #1a1a1a;border-radius:4px;font-size:10px;padding:4px 10px;">Edit</div>
+</div>
+</div>
+<div style="padding:14px;">
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+<div style="font-size:13px;">My Decks</div><div style="font-size:10px;color:#c0392b;">+ New deck</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+<div style="border:1px solid #1a1a1a;padding:8px;">
+<div style="display:flex;gap:5px;margin-bottom:5px;"><div style="width:14px;height:14px;background:#4a5d75;border-radius:2px;"></div><div style="font-size:11px;">Night's Watch Control</div></div>
+<div style="height:6px;background:#eee;margin-bottom:3px;"></div><div style="height:6px;width:70%;background:#eee;"></div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:8px;">
+<div style="display:flex;gap:5px;margin-bottom:5px;"><div style="width:14px;height:14px;background:#7a3b3b;border-radius:2px;"></div><div style="font-size:11px;">Lannister Economy</div></div>
+<div style="height:6px;background:#eee;margin-bottom:3px;"></div><div style="height:6px;width:60%;background:#eee;"></div>
+</div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">
+<div style="font-size:13px;">Community News</div><div style="font-size:10px;color:#666;">See all</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+<div><div style="font-size:11px;">Kings Landing set previews begin</div><div style="font-size:9px;color:#666;">Aug 8 · site news</div></div>
+<div><div style="font-size:11px;">Weekly meta report: Targaryen on the rise</div><div style="font-size:9px;color:#666;">Aug 5 · community</div></div>
+<div><div style="font-size:11px;">New tournament format announced</div><div style="font-size:9px;color:#666;">Aug 1 · site news</div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Continue-deck card up top, decks + news below the fold</div>
+</div>
+
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Search</div>
+<div class="dv-card">
+<div class="wf-frame" style="width:460px;">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1.5px solid #1a1a1a;">
+<div style="display:flex;align-items:center;gap:8px;"><div style="width:24px;height:24px;border:1.5px solid #1a1a1a;border-radius:50%;"></div><div style="font-size:14px;">ThronesDB</div></div>
+<div style="display:flex;gap:10px;font-size:11px;"><div style="color:#c0392b;">Cards</div><div>Decks</div><div>Community</div><div style="border:1px solid #1a1a1a;border-radius:50%;width:20px;height:20px;"></div></div>
+</div>
+<div style="display:flex;">
+<div style="width:120px;border-right:1px solid #1a1a1a;padding:10px 10px;font-size:10px;display:flex;flex-direction:column;gap:8px;">
+<div style="border:1.5px solid #1a1a1a;border-radius:12px;padding:5px 8px;">Search text…</div>
+<div>
+<div style="font-weight:bold;margin-bottom:3px;">▾ Faction</div>
+<div style="padding-left:4px;">☑ Stark</div><div style="padding-left:4px;">☐ Lannister</div><div style="padding-left:4px;">☐ Targaryen</div>
+</div>
+<div><div>▸ Type</div></div>
+<div><div>▸ Cost</div></div>
+<div><div>▸ Traits</div></div>
+<div><div>▸ Set / Icon</div></div>
+<div style="color:#c0392b;">Clear filters</div>
+</div>
+<div style="flex:1;padding:10px;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:10px;">
+<div style="color:#c0392b;">142 cards — updates live</div>
+<div style="display:flex;gap:8px;color:#666;"><div>Sort: Name ▾</div><div>▦</div><div>☰</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+<div style="border:1px solid #1a1a1a;padding:5px;position:relative;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Eddard Stark</div><div style="font-size:8px;color:#666;">Character · cost 4</div>
+<div style="position:absolute;top:4px;right:4px;width:11px;height:11px;border:1px solid #1a1a1a;border-radius:2px;background:#fff;"></div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;position:relative;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Winterfell</div><div style="font-size:8px;color:#666;">Location · cost 3</div>
+<div style="position:absolute;top:4px;right:4px;width:11px;height:11px;border:1px solid #1a1a1a;border-radius:2px;background:#fff;"></div>
+</div>
+<div style="border:1.5px solid #c0392b;padding:5px;position:relative;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Direwolf</div><div style="font-size:8px;color:#666;">Attachment · cost 2</div>
+<div style="position:absolute;top:4px;right:4px;width:11px;height:11px;border:1.5px solid #c0392b;border-radius:2px;background:#c0392b;"></div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Robb Stark</div><div style="font-size:8px;color:#666;">Character · cost 5</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">Catelyn Stark</div><div style="font-size:8px;color:#666;">Character · cost 3</div>
+</div>
+<div style="border:1px solid #1a1a1a;padding:5px;">
+<div style="height:50px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);margin-bottom:4px;"></div>
+<div style="font-size:9px;">The Wall</div><div style="font-size:8px;color:#666;">Location · cost 4</div>
+</div>
+</div>
+<div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#666;">
+<div>‹ Page 1 of 12 ›</div>
+</div>
+<div style="margin-top:8px;border:1.5px solid #c0392b;padding:6px 8px;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:10px;color:#c0392b;">Comparing: Direwolf</div>
+<div style="font-size:10px;border:1px solid #c0392b;color:#c0392b;padding:2px 8px;border-radius:4px;">View compare</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Faction group expanded to show real checkboxes; others collapsed</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "add the deck-builder screen using <a class="dv-oid" href="#2a">2a</a>/<a class="dv-oid" href="#2b">2b</a>'s style" · "adjust the compare tray in <a class="dv-oid" href="#2b">2b</a>" · "tweak the home page news layout"</p>
+</section>
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">ThronesDB redesign — home &amp; search, 4 approaches</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Sidebar nav, accordion filters</div>
+<div class="dv-card">
+<div class="wf-frame">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;">
+<div style="width:64px;border-right:1.5px solid #1a1a1a;padding:10px 6px;display:flex;flex-direction:column;gap:14px;align-items:center;font-size:10px;">
+<div style="width:34px;height:34px;border:1.5px solid #1a1a1a;border-radius:50%;"></div>
+<div>Decks</div><div>Cards</div><div>News</div>
+</div>
+<div style="flex:1;padding:12px;display:flex;flex-direction:column;gap:12px;">
+<div style="border:1.5px solid #c0392b;color:#c0392b;font-size:12px;text-align:center;padding:6px;">+ New Deck</div>
+<div style="font-size:12px;">My Decks</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+<div style="border:1px solid #1a1a1a;height:54px;background:repeating-linear-gradient(45deg,#eee,#eee 6px,#fff 6px,#fff 12px);"></div>
+<div style="border:1px solid #1a1a1a;height:54px;background:repeating-linear-gradient(45deg,#eee,#eee 6px,#fff 6px,#fff 12px);"></div>
+</div>
+<div style="font-size:12px;margin-top:6px;">Community News</div>
+<div style="border:1px solid #1a1a1a;height:16px;"></div>
+<div style="border:1px solid #1a1a1a;height:16px;"></div>
+</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="display:flex;">
+<div style="width:110px;border-right:1.5px solid #1a1a1a;padding:10px 8px;font-size:11px;display:flex;flex-direction:column;gap:6px;">
+<div style="border:1px solid #1a1a1a;border-radius:12px;padding:4px 6px;">Search text</div>
+<div>▸ Faction</div>
+<div>▸ Type</div>
+<div>▸ Cost</div>
+<div>▸ Traits</div>
+<div>▸ Set</div>
+</div>
+<div style="flex:1;padding:10px;">
+<div style="font-size:11px;color:#c0392b;margin-bottom:6px;">128 results — live</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;">
+<div style="border:1px solid #1a1a1a;height:60px;position:relative;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"><div style="position:absolute;bottom:2px;right:2px;width:10px;height:10px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+<div style="border:1px solid #1a1a1a;height:60px;position:relative;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"><div style="position:absolute;bottom:2px;right:2px;width:10px;height:10px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+<div style="border:1px solid #1a1a1a;height:60px;position:relative;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"><div style="position:absolute;bottom:2px;right:2px;width:10px;height:10px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+<div style="border:1px solid #1a1a1a;height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:60px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+<div style="margin-top:8px;border:1.5px dashed #c0392b;font-size:10px;color:#c0392b;padding:5px;text-align:center;">Compare tray (2 selected — checkboxes ⊡ on card)</div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Filters collapsed by default · check-to-compare · live count</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Top nav, filter chips</div>
+<div class="dv-card">
+<div class="wf-frame">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid #1a1a1a;font-size:11px;">
+<div>ThronesDB</div><div style="display:flex;gap:10px;"><div>Decks</div><div>Cards</div><div>Login</div></div>
+</div>
+<div style="padding:14px;text-align:center;border-bottom:1.5px solid #1a1a1a;">
+<div style="font-size:14px;color:#c0392b;">Build your next deck</div>
+<div style="border:1.5px solid #1a1a1a;border-radius:16px;height:22px;width:70%;margin:8px auto;"></div>
+</div>
+<div style="padding:10px 12px;">
+<div style="font-size:11px;margin-bottom:6px;">Recent Decks →</div>
+<div style="display:flex;gap:8px;overflow:hidden;">
+<div style="border:1px solid #1a1a1a;width:70px;height:44px;flex:none;"></div>
+<div style="border:1px solid #1a1a1a;width:70px;height:44px;flex:none;"></div>
+<div style="border:1px solid #1a1a1a;width:70px;height:44px;flex:none;"></div>
+<div style="border:1px solid #1a1a1a;width:70px;height:44px;flex:none;"></div>
+</div>
+<div style="font-size:11px;margin:10px 0 4px;">News</div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:3px;"></div>
+<div style="border:1px solid #1a1a1a;height:14px;"></div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:8px 10px;border-bottom:1px solid #1a1a1a;">
+<div style="border:1.5px solid #1a1a1a;border-radius:14px;height:20px;margin-bottom:6px;"></div>
+<div style="display:flex;gap:5px;flex-wrap:wrap;">
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Faction ▾</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Type ▾</div>
+<div style="border:1px solid #1a1a1a;border-radius:10px;font-size:9px;padding:2px 8px;">Cost ▾</div>
+<div style="border:1px solid #c0392b;color:#c0392b;border-radius:10px;font-size:9px;padding:2px 8px;">+ more</div>
+</div>
+</div>
+<div style="padding:10px;">
+<div style="font-size:10px;color:#c0392b;margin-bottom:6px;">Updating as you type…</div>
+<div style="display:flex;flex-direction:column;gap:6px;">
+<div style="display:flex;align-items:center;gap:6px;border:1px solid #1a1a1a;padding:5px 6px;"><div style="width:22px;height:28px;border:1px solid #1a1a1a;flex:none;"></div><div style="flex:1;height:8px;background:#eee;"></div><div style="width:12px;height:12px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+<div style="display:flex;align-items:center;gap:6px;border:1px solid #1a1a1a;padding:5px 6px;"><div style="width:22px;height:28px;border:1px solid #1a1a1a;flex:none;"></div><div style="flex:1;height:8px;background:#eee;"></div><div style="width:12px;height:12px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+<div style="display:flex;align-items:center;gap:6px;border:1px solid #1a1a1a;padding:5px 6px;"><div style="width:22px;height:28px;border:1px solid #1a1a1a;flex:none;"></div><div style="flex:1;height:8px;background:#eee;"></div><div style="width:12px;height:12px;border:1px solid #1a1a1a;border-radius:2px;"></div></div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Filters as collapsed chips · list view · pin-to-compare per row</div>
+</div>
+
+<div class="dv-opt" id="1c">
+<div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Search-first, dense table</div>
+<div class="dv-card">
+<div class="wf-frame">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:20px 14px;text-align:center;">
+<div style="font-size:13px;">ThronesDB</div>
+<div style="border:1.5px solid #1a1a1a;border-radius:18px;height:26px;width:80%;margin:12px auto;box-shadow:1px 2px 0 #1a1a1a;"></div>
+<div style="font-size:9px;color:#666;">search any card…</div>
+</div>
+<div style="display:flex;gap:10px;padding:0 14px 14px;">
+<div style="flex:1;border:1px solid #1a1a1a;padding:6px;font-size:9px;">Continue: <div style="border:1px solid #1a1a1a;height:26px;margin-top:4px;"></div></div>
+<div style="flex:1;border:1px solid #1a1a1a;padding:6px;font-size:9px;">News ticker<div style="border:1px solid #1a1a1a;height:10px;margin-top:4px;"></div><div style="border:1px solid #1a1a1a;height:10px;margin-top:3px;"></div></div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="padding:10px 10px 4px;">
+<div style="border:1.5px solid #1a1a1a;border-radius:16px;height:22px;"></div>
+<div style="font-size:9px;color:#c0392b;margin:6px 0;">Advanced filters ▾ (collapsed)</div>
+</div>
+<div style="padding:0 10px 10px;">
+<div style="display:grid;grid-template-columns:1.4fr .8fr .6fr .8fr;gap:2px;font-size:8px;border:1px solid #1a1a1a;">
+<div style="border-bottom:1px solid #1a1a1a;padding:3px;">Name ↕</div><div style="border-bottom:1px solid #1a1a1a;padding:3px;">Faction</div><div style="border-bottom:1px solid #1a1a1a;padding:3px;">Cost</div><div style="border-bottom:1px solid #1a1a1a;padding:3px;">Type</div>
+<div style="padding:3px;background:#f7f5f1;">card name</div><div style="padding:3px;background:#f7f5f1;height:8px;"></div><div style="padding:3px;background:#f7f5f1;">2</div><div style="padding:3px;background:#f7f5f1;height:8px;"></div>
+<div style="padding:3px;">card name</div><div style="padding:3px;height:8px;"></div><div style="padding:3px;">4</div><div style="padding:3px;height:8px;"></div>
+<div style="padding:3px;background:#f7f5f1;">card name</div><div style="padding:3px;background:#f7f5f1;height:8px;"></div><div style="padding:3px;background:#f7f5f1;">1</div><div style="padding:3px;background:#f7f5f1;height:8px;"></div>
+<div style="padding:3px;">card name</div><div style="padding:3px;height:8px;"></div><div style="padding:3px;">3</div><div style="padding:3px;height:8px;"></div>
+</div>
+<div style="margin-top:6px;border:1.5px dashed #c0392b;font-size:9px;color:#c0392b;padding:4px;text-align:center;">sticky compare bar (select rows)</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Table view for scanning fast · filters hidden until asked for</div>
+</div>
+
+<div class="dv-opt" id="1d">
+<div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Search + deck panel, always together</div>
+<div class="dv-card">
+<div class="wf-frame">
+<div class="wf-chrome"><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-addr"></div></div>
+<div style="padding:8px 10px;border-bottom:1px solid #1a1a1a;font-size:11px;display:flex;justify-content:space-between;"><div>ThronesDB</div><div style="display:flex;gap:8px;"><div>Decks</div><div>Cards</div></div></div>
+<div style="display:flex;">
+<div style="flex:1;padding:10px;border-right:1px solid #1a1a1a;">
+<div style="font-size:11px;margin-bottom:6px;">Your Decks</div>
+<div style="border:1px solid #1a1a1a;height:26px;margin-bottom:5px;"></div>
+<div style="border:1px solid #1a1a1a;height:26px;"></div>
+</div>
+<div style="flex:1;padding:10px;">
+<div style="font-size:11px;margin-bottom:6px;">Community + News</div>
+<div style="border:1px solid #1a1a1a;height:16px;margin-bottom:4px;"></div>
+<div style="border:1px solid #1a1a1a;height:16px;margin-bottom:4px;"></div>
+<div style="border:1px solid #1a1a1a;height:16px;"></div>
+</div>
+</div>
+</div>
+<div style="height:1px;background:#1a1a1a;margin:2px 0;"></div>
+<div class="wf-frame" style="border-top:none;">
+<div style="display:flex;">
+<div style="flex:1.4;padding:10px;border-right:1.5px solid #1a1a1a;">
+<div style="border:1px solid #1a1a1a;border-radius:12px;height:18px;margin-bottom:6px;"></div>
+<div style="font-size:9px;margin-bottom:5px;">▸ Faction ▸ Type ▸ Cost (collapsed)</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+<div style="border:1px solid #1a1a1a;height:44px;background:repeating-linear-gradient(45deg,#eee,#eee 5px,#fff 5px,#fff 10px);"></div>
+</div>
+</div>
+<div style="flex:1;padding:10px;background:#faf8f5;">
+<div style="font-size:9px;color:#c0392b;margin-bottom:6px;">Deck in progress — click a card to add</div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:4px;"></div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:4px;"></div>
+<div style="border:1px solid #1a1a1a;height:14px;margin-bottom:4px;"></div>
+<div style="border:1px dashed #1a1a1a;height:14px;"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="wf-lbl">Search and deck-building live side by side — no page switch</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "combine <a class="dv-oid" href="#1a">1a</a>'s accordion filters with <a class="dv-oid" href="#1d">1d</a>'s side-by-side deck panel" · "make <a class="dv-oid" href="#1c">1c</a> the direction, add compare view" · "show the deck-builder screen next"</p>
+</section>
+
+</x-dc>
+</body>
+</html>

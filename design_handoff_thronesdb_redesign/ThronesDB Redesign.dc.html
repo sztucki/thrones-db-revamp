@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet data-dc-atomics>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;font-family:'Inter',system-ui,sans-serif;background:oklch(0.98 0.003 250)}
+a{color:oklch(0.5 0.14 255);text-decoration:none}
+a:hover{color:oklch(0.42 0.14 255)}
+::placeholder{color:oklch(0.6 0.008 250)}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:oklch(0.98 0.003 250);color:oklch(0.22 0.01 250);">
+
+<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 28px;border-bottom:1px solid oklch(0.88 0.008 250);position:sticky;top:0;background:oklch(0.98 0.003 250);z-index:5;">
+<div style="display:flex;align-items:center;gap:28px;">
+<div style="font-size:17px;font-weight:700;letter-spacing:.2px;">ThronesDB</div>
+<div style="display:flex;gap:20px;font-size:14px;">
+<div onClick="{{ goHome }}" style="{{ homeTabStyle }}">Home</div>
+<div onClick="{{ goSearch }}" style="{{ searchTabStyle }}">Cards</div>
+<div onClick="{{ goDecks }}" style="{{ decksTabStyle }}">Decks</div>
+<div onClick="{{ goReviews }}" style="{{ reviewsTabStyle }}">Reviews</div>
+<div onClick="{{ goRules }}" style="{{ rulesTabStyle }}">Rules</div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:14px;position:relative;">
+
+<div style="position:relative;">
+<div onClick="{{ toggleLangMenu }}" style="display:flex;align-items:center;gap:4px;font-size:13px;color:oklch(0.4 0.008 250);cursor:pointer;">{{ langLabel }} <span style="font-size:9px;">▾</span></div>
+<sc-if value="{{ langOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:26px;right:0;background:oklch(0.98 0.003 250);border:1px solid oklch(0.85 0.008 250);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);min-width:120px;z-index:10;overflow:hidden;">
+<div onClick="{{ setLangEn }}" style="padding:8px 12px;font-size:13px;cursor:pointer;">English</div>
+<div onClick="{{ setLangEs }}" style="padding:8px 12px;font-size:13px;cursor:pointer;">Español</div>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{ isLoggedOut }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ logIn }}" style="border:1px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:6px 16px;font-size:13px;font-weight:500;cursor:pointer;">Log in</div>
+</sc-if>
+
+<sc-if value="{{ isLoggedIn }}" hint-placeholder-val="{{ false }}">
+<div style="position:relative;">
+<div onClick="{{ toggleAccountMenu }}" style="width:30px;height:30px;border-radius:50%;background:oklch(0.92 0.006 250);border:1px solid oklch(0.85 0.008 250);cursor:pointer;"></div>
+<sc-if value="{{ accountOpen }}" hint-placeholder-val="{{ false }}">
+<div style="position:absolute;top:38px;right:0;background:oklch(0.98 0.003 250);border:1px solid oklch(0.85 0.008 250);border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.08);min-width:170px;z-index:10;overflow:hidden;">
+<div style="padding:10px 14px;font-size:12px;color:oklch(0.5 0.008 250);border-bottom:1px solid oklch(0.9 0.006 250);">Signed in as Odrl</div>
+<div style="padding:9px 14px;font-size:13px;cursor:pointer;">Edit profile</div>
+<div style="padding:9px 14px;font-size:13px;cursor:pointer;">Public account</div>
+<div onClick="{{ logOut }}" style="padding:9px 14px;font-size:13px;cursor:pointer;border-top:1px solid oklch(0.9 0.006 250);color:oklch(0.5 0.14 25);">Log out</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+</div>
+</div>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:1040px;margin:0 auto;padding:32px 28px 60px;">
+
+<div style="margin-bottom:32px;">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);margin-bottom:10px;">Continue where you left off</div>
+<div style="display:flex;align-items:center;gap:16px;background:oklch(0.94 0.01 255);border:1px solid oklch(0.5 0.14 255 / .35);border-radius:10px;padding:16px 20px;">
+<div style="width:6px;height:40px;border-radius:3px;background:oklch(0.5 0.14 255);flex:none;"></div>
+<div style="flex:1;">
+<div style="font-size:15px;font-weight:600;">Stark Aggro — v3</div>
+<div style="font-size:12px;color:oklch(0.5 0.008 250);margin-top:2px;">62 cards · edited 2 days ago</div>
+</div>
+<div onClick="{{ goEditDeck }}" style="border:1px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:8px 16px;font-size:13px;font-weight:500;background:oklch(0.98 0.003 250);cursor:pointer;">Edit deck</div>
+</div>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+<div style="font-size:16px;font-weight:600;">My decks</div>
+<a href="#">+ New deck</a>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px;">
+<sc-for list="{{ myDecks }}" as="deck" hint-placeholder-count="3">
+<div style="background:oklch(0.96 0.004 250);border:1px solid oklch(0.88 0.008 250);border-radius:10px;padding:16px;">
+<div style="font-size:14px;font-weight:600;margin-bottom:6px;">{{ deck.name }}</div>
+<div style="font-size:12px;color:oklch(0.5 0.008 250);margin-bottom:10px;">{{ deck.faction }} · {{ deck.cards }} cards</div>
+<div style="height:5px;background:oklch(0.88 0.008 250);border-radius:3px;overflow:hidden;">
+<div style="height:100%;background:oklch(0.5 0.14 255);width:{{ deck.pct }}"></div>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+<div style="font-size:16px;font-weight:600;">Community news</div>
+<a href="#">See all</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;">
+<sc-for list="{{ newsItems }}" as="item" hint-placeholder-count="3">
+<div style="display:flex;justify-content:space-between;border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:12px;">
+<div style="font-size:14px;">{{ item.title }}</div>
+<div style="font-size:12px;color:oklch(0.55 0.008 250);flex:none;margin-left:16px;">{{ item.date }}</div>
+</div>
+</sc-for>
+</div>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;max-width:1200px;margin:0 auto;padding:24px 28px 60px;gap:24px;">
+
+<div style="width:220px;flex:none;">
+<input placeholder="Search card text…" value="{{ query }}" onChange="{{ onQueryChange }}" style="width:100%;box-sizing:border-box;background:oklch(0.96 0.004 250);border:1px solid oklch(0.85 0.008 250);border-radius:8px;padding:9px 12px;color:oklch(0.22 0.01 250);font-size:13px;margin-bottom:16px;">
+
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:12px;margin-bottom:12px;">
+<div onClick="{{ toggleFactionGroup }}" style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;cursor:pointer;margin-bottom:8px;">
+<span>Faction</span><span>{{ factionCaret }}</span>
+</div>
+<sc-if value="{{ factionOpen }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:6px;padding-left:2px;">
+<sc-for list="{{ factions }}" as="f" hint-placeholder-count="3">
+<div onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+<div style="{{ f.swatchStyle }}"></div>{{ f.name }}
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:10px;margin-bottom:10px;font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;">▸ Type</div>
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:10px;margin-bottom:10px;font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;">▸ Cost</div>
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:10px;margin-bottom:10px;font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;">▸ Traits</div>
+<div style="font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;margin-bottom:16px;">▸ Set / Icons</div>
+<a href="#" onClick="{{ clearFilters }}" style="font-size:12px;">Clear filters</a>
+</div>
+
+<div style="flex:1;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+<div style="font-size:13px;color:oklch(0.5 0.14 255);">{{ resultCount }} cards — updates live</div>
+<div style="display:flex;gap:16px;font-size:13px;color:oklch(0.5 0.008 250);">
+<div>Sort: Name ▾</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+<sc-for list="{{ filteredCards }}" as="card" hint-placeholder-count="8">
+<div style="{{ card.selected }}" onClick="{{ card.onClick }}">
+<div style="height:96px;border-radius:6px 6px 0 0;background:repeating-linear-gradient(45deg,oklch(0.92 0.006 250),oklch(0.92 0.006 250) 8px,oklch(0.96 0.004 250) 8px,oklch(0.96 0.004 250) 16px);"></div>
+<div style="padding:10px;background:oklch(0.98 0.003 250);border-radius:0 0 6px 6px;">
+<div style="font-size:13px;font-weight:600;margin-bottom:3px;">{{ card.name }}</div>
+<div style="font-size:11px;color:oklch(0.5 0.008 250);">{{ card.type }} · cost {{ card.cost }} · {{ card.faction }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;font-size:13px;color:oklch(0.5 0.008 250);">
+<div>‹ Page 1 of 12 ›</div>
+</div>
+
+<div style="margin-top:16px;font-size:12px;color:oklch(0.5 0.008 250);">
+Rulings for a card? Check the <a href="#" onClick="{{ goReviews }}">Reviews</a> section.
+</div>
+
+<sc-if value="{{ hasCompare }}" hint-placeholder-val="{{ false }}">
+<div style="margin-top:16px;border:1px solid oklch(0.5 0.14 255 / .45);background:oklch(0.94 0.01 255);border-radius:8px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;">
+<div style="font-size:13px;color:oklch(0.4 0.14 255);">Comparing: {{ compareNames }}</div>
+<div style="font-size:13px;border:1px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:6px 14px;background:oklch(0.98 0.003 250);">View compare</div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isDecks }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;max-width:1200px;margin:0 auto;padding:24px 28px 60px;gap:24px;">
+
+<div style="width:220px;flex:none;">
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:12px;margin-bottom:12px;">
+<div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-bottom:8px;">
+<span>Faction</span><span>▾</span>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;padding-left:2px;">
+<sc-for list="{{ deckFactions }}" as="f" hint-placeholder-count="4">
+<div onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;">
+<div style="{{ f.swatchStyle }}"></div>{{ f.name }}
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="border-bottom:1px solid oklch(0.9 0.006 250);padding-bottom:10px;margin-bottom:10px;font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;">▸ Format</div>
+<div style="font-size:13px;color:oklch(0.5 0.008 250);cursor:pointer;margin-bottom:16px;">▸ Status</div>
+<a href="#" onClick="{{ clearDeckFilters }}" style="font-size:12px;">Clear filters</a>
+</div>
+
+<div style="flex:1;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+<div style="font-size:13px;color:oklch(0.5 0.14 255);">{{ deckResultCount }} decks{{ deckFilterSuffix }}</div>
+<div style="display:flex;gap:16px;align-items:center;">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Sort: Recently edited ▾</div>
+<div onClick="{{ goNewDeck }}" style="border:1.5px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:500;background:oklch(0.98 0.003 250);cursor:pointer;">+ New deck</div>
+</div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+<sc-for list="{{ filteredDecks }}" as="deck" hint-placeholder-count="6">
+<div style="border-radius:8px;overflow:hidden;border:1px solid oklch(0.88 0.008 250);">
+<div style="height:70px;background:repeating-linear-gradient(45deg,oklch(0.92 0.006 250),oklch(0.92 0.006 250) 8px,oklch(0.96 0.004 250) 8px,oklch(0.96 0.004 250) 16px);"></div>
+<div style="padding:12px;background:oklch(0.98 0.003 250);">
+<div style="font-size:13px;font-weight:600;margin-bottom:3px;">{{ deck.name }}</div>
+<div style="font-size:11px;color:oklch(0.5 0.008 250);">{{ deck.faction }} · {{ deck.cards }} cards · {{ deck.edited }}</div>
+</div>
+</div>
+</sc-for>
+<div style="border:1.5px dashed oklch(0.8 0.008 250);border-radius:8px;display:flex;align-items:center;justify-content:center;color:oklch(0.6 0.008 250);font-size:22px;min-height:110px;">+</div>
+</div>
+
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isBuilder }}" hint-placeholder-val="{{ false }}">
+<sc-if value="{{ isSelectStep }}" hint-placeholder-val="{{ true }}">
+<div style="max-width:640px;margin:0 auto;padding:40px 28px 60px;">
+
+<sc-if value="{{ isHouseStep }}" hint-placeholder-val="{{ true }}">
+<div style="text-align:center;">
+<div style="font-size:18px;font-weight:700;margin-bottom:4px;">New Deck</div>
+<div style="font-size:13px;color:oklch(0.5 0.008 250);margin-bottom:28px;">Step 1 of 2 — choose your house</div>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+<sc-for list="{{ houses }}" as="house" hint-placeholder-count="4">
+<div onClick="{{ house.onClick }}" style="{{ house.style }}">
+<div style="width:32px;height:32px;border-radius:50%;background:oklch(0.92 0.006 250);margin:0 auto 8px;"></div>
+{{ house.name }}
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAgendaStep }}" hint-placeholder-val="{{ false }}">
+<div style="text-align:center;">
+<div style="font-size:18px;font-weight:700;margin-bottom:4px;">New Deck — {{ selectedHouse }}</div>
+<div style="font-size:13px;color:oklch(0.5 0.008 250);margin-bottom:28px;">Step 2 of 2 — choose an agenda (optional)</div>
+<div style="display:flex;gap:14px;justify-content:center;margin-bottom:28px;">
+<sc-for list="{{ agendas }}" as="a" hint-placeholder-count="3">
+<div onClick="{{ a.onClick }}" style="{{ a.style }}">
+<div style="height:70px;border-radius:6px 6px 0 0;background:repeating-linear-gradient(45deg,oklch(0.92 0.006 250),oklch(0.92 0.006 250) 8px,oklch(0.96 0.004 250) 8px,oklch(0.96 0.004 250) 16px);"></div>
+<div style="padding:8px;font-size:12px;background:oklch(0.98 0.003 250);border-radius:0 0 6px 6px;">{{ a.name }}</div>
+</div>
+</sc-for>
+</div>
+<div onClick="{{ startBuilding }}" style="display:inline-block;border:1.5px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:10px 24px;font-size:14px;font-weight:500;cursor:pointer;">Start building →</div>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ isBuildStep }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;max-width:1200px;margin:0 auto;padding:24px 28px 60px;gap:24px;">
+
+<div style="flex:1;">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+<div style="font-size:16px;font-weight:700;">{{ builderDeckName }}</div>
+<div style="display:flex;gap:10px;align-items:center;">
+<div style="font-size:12px;color:oklch(0.55 0.008 250);">{{ autosaveLabel }}</div>
+<div onClick="{{ goDecks }}" style="border:1px solid oklch(0.85 0.008 250);color:oklch(0.45 0.008 250);border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;">Cancel</div>
+<div style="border:1.5px solid oklch(0.5 0.14 255);color:oklch(0.5 0.14 255);border-radius:6px;padding:6px 16px;font-size:13px;cursor:pointer;">Save</div>
+</div>
+</div>
+<input placeholder="Search card text…" value="{{ builderQuery }}" onChange="{{ onBuilderQueryChange }}" style="width:100%;box-sizing:border-box;background:oklch(0.96 0.004 250);border:1px solid oklch(0.85 0.008 250);border-radius:8px;padding:9px 12px;color:oklch(0.22 0.01 250);font-size:13px;margin-bottom:10px;">
+<div style="display:flex;gap:6px;margin-bottom:14px;">
+<div style="border:1px solid oklch(0.85 0.008 250);border-radius:10px;font-size:12px;padding:3px 10px;background:oklch(0.94 0.01 255);color:oklch(0.4 0.14 255);">Faction: {{ selectedHouse }}</div>
+<div style="border:1px solid oklch(0.85 0.008 250);border-radius:10px;font-size:12px;padding:3px 10px;color:oklch(0.5 0.008 250);">Type ▾</div>
+<div style="border:1px solid oklch(0.85 0.008 250);border-radius:10px;font-size:12px;padding:3px 10px;color:oklch(0.5 0.008 250);">Cost ▾</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+<sc-for list="{{ builderResults }}" as="card" hint-placeholder-count="6">
+<div onClick="{{ card.onClick }}" style="border:1px solid oklch(0.88 0.008 250);border-radius:6px;overflow:hidden;cursor:pointer;">
+<div style="height:80px;background:repeating-linear-gradient(45deg,oklch(0.92 0.006 250),oklch(0.92 0.006 250) 8px,oklch(0.96 0.004 250) 8px,oklch(0.96 0.004 250) 16px);"></div>
+<div style="padding:8px;background:oklch(0.98 0.003 250);">
+<div style="font-size:12px;font-weight:600;">{{ card.name }}</div>
+<div style="font-size:10px;color:oklch(0.5 0.008 250);">{{ card.type }} · cost {{ card.cost }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="width:270px;flex:none;background:oklch(0.96 0.004 250);border:1px solid oklch(0.88 0.008 250);border-radius:10px;padding:16px;align-self:flex-start;">
+<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:14px;">
+<div style="font-weight:700;color:{{ countColor }};">{{ deckCardTotal }} / 60 cards</div>
+<div style="color:oklch(0.5 0.008 250);">{{ selectedHouse }}</div>
+</div>
+
+<div style="border:1px solid oklch(0.88 0.008 250);border-radius:8px;padding:12px;margin-bottom:16px;background:oklch(0.98 0.003 250);">
+<div style="font-size:12px;font-weight:600;margin-bottom:8px;">Tournament Legality</div>
+<div style="display:grid;grid-template-columns:1.4fr 0.8fr 0.8fr;row-gap:6px;font-size:12px;">
+<div></div><div style="color:oklch(0.5 0.008 250);">Joust</div><div style="color:oklch(0.5 0.008 250);">Melee</div>
+<sc-for list="{{ legalityRows }}" as="row" hint-placeholder-count="2">
+<div>{{ row.format }}</div>
+<div style="{{ row.joustStyle }}">{{ row.joustIcon }}</div>
+<div style="{{ row.meleeStyle }}">{{ row.meleeIcon }}</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:0;margin-bottom:14px;max-height:220px;overflow:auto;">
+<sc-for list="{{ builderDeck }}" as="row" hint-placeholder-count="4">
+<div onClick="{{ row.onRemove }}" style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid oklch(0.9 0.006 250);cursor:pointer;">
+<span>{{ row.name }}</span><span>x{{ row.count }}</span>
+</div>
+</sc-for>
+</div>
+<div style="font-size:11px;color:oklch(0.5 0.008 250);margin-bottom:6px;">Cost curve</div>
+<div style="display:flex;align-items:flex-end;gap:4px;height:36px;margin-bottom:14px;">
+<sc-for list="{{ curveBars }}" as="bar" hint-placeholder-count="7">
+<div style="{{ bar.style }}"></div>
+</sc-for>
+</div>
+<div style="border:1px solid oklch(0.85 0.008 250);border-radius:6px;padding:8px;font-size:12px;color:oklch(0.5 0.008 250);text-align:center;">{{ warningsLabel }}</div>
+</div>
+
+</div>
+</sc-if>
+</sc-if>
+
+<sc-if value="{{ isReviews }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:760px;margin:0 auto;padding:32px 28px 60px;">
+
+<sc-if value="{{ hasDetailCard }}" hint-placeholder-val="{{ false }}">
+<div>
+<a href="#" onClick="{{ closeDetail }}" style="font-size:13px;">← Back to reviews</a>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 4px;">
+<div style="font-size:18px;font-weight:700;">{{ detailCard.name }}</div>
+<div style="font-size:12px;color:oklch(0.5 0.008 250);">{{ detailCard.type }} · cost {{ detailCard.cost }} · {{ detailCard.faction }}</div>
+</div>
+<div style="display:flex;gap:0;border-bottom:1.5px solid oklch(0.85 0.008 250);margin-bottom:16px;font-size:13px;">
+<div onClick="{{ setDetailTabOverview }}" style="{{ overviewTabStyle }}">Overview</div>
+<div onClick="{{ setDetailTabRulings }}" style="{{ rulingsTabStyle }}">Rulings ({{ detailCard.notes.length }})</div>
+<div onClick="{{ setDetailTabDecks }}" style="{{ decksWithTabStyle }}">Decks with this card</div>
+</div>
+<sc-if value="{{ isDetailOverview }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Card details go here — text box, keywords, faction icon, printed cost.</div>
+</sc-if>
+<sc-if value="{{ isDetailRulings }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:12px;">
+<sc-for list="{{ detailCard.notes }}" as="note" hint-placeholder-count="3">
+<div style="border-left:2px solid oklch(0.68 0.15 25);padding-left:12px;font-size:13px;color:oklch(0.35 0.008 250);line-height:1.5;">{{ note }}</div>
+</sc-for>
+</div>
+</sc-if>
+<sc-if value="{{ isDetailDecks }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Decks featuring this card go here.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ noDetailCard }}" hint-placeholder-val="{{ true }}">
+<div>
+<div style="font-size:18px;font-weight:700;margin-bottom:20px;">Card Reviews</div>
+<div style="display:flex;flex-direction:column;gap:14px;">
+<sc-for list="{{ reviewItems }}" as="item" hint-placeholder-count="4">
+<div style="border:1px solid oklch(0.88 0.008 250);border-radius:8px;padding:14px;">
+<div onClick="{{ item.openDetail }}" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;margin-bottom:8px;">
+<div style="width:40px;height:54px;border-radius:4px;flex:none;background:repeating-linear-gradient(45deg,oklch(0.92 0.006 250),oklch(0.92 0.006 250) 8px,oklch(0.96 0.004 250) 8px,oklch(0.96 0.004 250) 16px);"></div>
+<div style="flex:1;">
+<div style="font-size:14px;font-weight:600;">{{ item.name }}</div>
+<div style="font-size:12px;color:oklch(0.5 0.008 250);">Rules FAQ · {{ item.notes.length }} notes · {{ item.date }}</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;">
+<sc-for list="{{ item.visibleNotes }}" as="note" hint-placeholder-count="1">
+<div style="border-left:2px solid oklch(0.68 0.15 25);padding-left:10px;font-size:12px;color:oklch(0.4 0.008 250);line-height:1.5;">{{ note }}</div>
+</sc-for>
+</div>
+<sc-if value="{{ item.hasMore }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ item.toggleExpand }}" style="font-size:12px;color:oklch(0.5 0.14 25);margin-top:6px;cursor:pointer;">{{ item.moreLabel }}</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+<sc-if value="{{ isRules }}" hint-placeholder-val="{{ false }}">
+<div style="max-width:900px;margin:0 auto;padding:32px 28px 60px;">
+
+<div style="font-size:18px;font-weight:700;margin-bottom:16px;">Rules</div>
+<div style="display:flex;gap:0;border-bottom:1.5px solid oklch(0.85 0.008 250);margin-bottom:20px;font-size:13px;flex-wrap:wrap;">
+<div onClick="{{ setRulesTabReference }}" style="{{ refTabStyle }}">Rules Reference</div>
+<div onClick="{{ setRulesTabFaq }}" style="{{ faqTabStyle }}">F.A.Q.</div>
+<div onClick="{{ setRulesTabDraft }}" style="{{ draftTabStyle }}">Draft F.A.Q.</div>
+<div onClick="{{ setRulesTabRestrictions }}" style="{{ restrictionsTabStyle }}">Restrictions</div>
+<div onClick="{{ setRulesTabTournament }}" style="{{ tournamentTabStyle }}">Tournament Regulations</div>
+</div>
+
+<sc-if value="{{ isReferenceTab }}" hint-placeholder-val="{{ true }}">
+<div>
+<input placeholder="Search glossary terms…" value="{{ rulesQuery }}" onChange="{{ onRulesQueryChange }}" style="width:100%;box-sizing:border-box;background:oklch(0.96 0.004 250);border:1px solid oklch(0.85 0.008 250);border-radius:8px;padding:9px 12px;color:oklch(0.22 0.01 250);font-size:13px;margin-bottom:14px;">
+<sc-if value="{{ showLetterNav }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+<sc-for list="{{ letterNav }}" as="l" hint-placeholder-count="8">
+<div onClick="{{ l.onClick }}" style="{{ l.style }}">{{ l.letter }}</div>
+</sc-for>
+</div>
+</sc-if>
+<div style="display:flex;gap:24px;">
+<div style="width:160px;flex:none;display:flex;flex-direction:column;gap:6px;">
+<sc-for list="{{ termList }}" as="t" hint-placeholder-count="5">
+<div onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.term }}</div>
+</sc-for>
+</div>
+<div style="flex:1;">
+<div style="font-size:16px;font-weight:700;margin-bottom:8px;">{{ selectedTerm.term }}</div>
+<div style="font-size:14px;line-height:1.6;color:oklch(0.35 0.008 250);margin-bottom:12px;">{{ selectedTerm.summary }}</div>
+<div style="font-size:12px;color:oklch(0.55 0.008 250);">Related: {{ selectedTerm.related }}</div>
+</div>
+</div>
+<div style="margin-top:24px;padding-top:14px;border-top:1px solid oklch(0.88 0.008 250);font-size:12px;color:oklch(0.5 0.008 250);">
+Appendix I: Timing chart · Appendix II: Cardtype anatomy
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFaqTab }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">F.A.Q. content goes here.</div>
+</sc-if>
+<sc-if value="{{ isDraftTab }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Draft F.A.Q. content goes here.</div>
+</sc-if>
+<sc-if value="{{ isRestrictionsTab }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Restricted and Banned Cards list goes here.</div>
+</sc-if>
+<sc-if value="{{ isTournamentTab }}" hint-placeholder-val="{{ false }}">
+<div style="font-size:13px;color:oklch(0.5 0.008 250);">Tournament Regulations content goes here.</div>
+</sc-if>
+
+</div>
+</sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    tab: 'home',
+    query: '',
+    factionOpen: true,
+    activeFactions: [],
+    compare: [],
+    deckActiveFactions: [],
+    builderStep: 'house',
+    selectedHouse: null,
+    selectedAgenda: null,
+    builderQuery: '',
+    builderDeck: [],
+    expandedReviews: [],
+    detailCardName: null,
+    detailTab: 'rulings',
+    rulesSubTab: 'reference',
+    rulesQuery: '',
+    rulesLetter: 'A',
+    rulesTermName: 'Abilities',
+    lang: 'EN',
+    langOpen: false,
+    loggedIn: true,
+    accountOpen: false
+  };
+
+  glossaryTerms = [
+    { letter: 'A', term: 'Abilities', summary: 'Game text a card contributes to the game. Can be actions, constant abilities, interrupts, reactions, or keywords.', related: 'Actions, Effects, Costs' },
+    { letter: 'A', term: 'Actions', summary: 'A triggered ability that can only be initiated by a player during an action window.', related: 'Abilities' },
+    { letter: 'A', term: 'Active Player', summary: 'The player granted permission to perform a specified task during certain phases, such as collecting income.', related: 'Marshaling Phase, Challenges Phase' },
+    { letter: 'A', term: 'Agenda Cards', summary: 'Placed alongside a faction card, providing specialised abilities and deckbuilding limitations.', related: 'Deckbuilding' },
+    { letter: 'A', term: 'Ambush (X)', summary: 'A keyword letting a player pay X gold to put a card into play from hand during the challenges phase.', related: 'Keywords, Put into Play' },
+    { letter: 'B', term: 'Base Value', summary: 'The value of a quantity before any modifiers are applied.', related: 'Modifiers' },
+    { letter: 'C', term: 'Claim', summary: 'Determines the consequence a losing defender faces after a challenge is resolved.', related: 'Military Claim, Intrigue Claim, Power Claim' },
+    { letter: 'D', term: 'Deckbuilding', summary: 'The rules governing how a legal tournament deck of at least 60 cards is assembled.', related: 'Deck Limits, Faction' }
+  ];
+
+  goRules = () => this.setState({ tab: 'rules', rulesSubTab: 'reference' });
+  setRulesTab(t) { this.setState({ rulesSubTab: t }); }
+  onRulesQueryChange = (e) => this.setState({ rulesQuery: e.target.value });
+  setRulesLetter(l) { this.setState({ rulesLetter: l, rulesQuery: '' }); }
+  setRulesTerm(name) { this.setState({ rulesTermName: name }); }
+
+  toggleLangMenu = () => this.setState(s => ({ langOpen: !s.langOpen }));
+  setLangEn = () => this.setState({ lang: 'EN', langOpen: false });
+  setLangEs = () => this.setState({ lang: 'ES', langOpen: false });
+  toggleAccountMenu = () => this.setState(s => ({ accountOpen: !s.accountOpen }));
+  logIn = () => this.setState({ loggedIn: true });
+  logOut = () => this.setState({ loggedIn: false, accountOpen: false });
+
+  reviewsData = [
+    { name: "Armed to the Teeth", type: "Agenda", cost: null, faction: "Neutral", date: "Mar 27, 2026", notes: [
+      'If more than one agenda has the "after all agendas are announced" timing point, resolve them in player order.',
+      'The word "different" means different by title. You can include multiple copies of the same Weapon attachment.',
+      'After you put an attachment into play with the agenda, you can immediately use it in the same reaction window.',
+      "You can put A Pinch of Powder under your agenda, but since it has no printed cost, it cannot enter play with the agenda.",
+      "You can trigger abilities that put additional cards under your agenda, but Armed to the Teeth won't interact with them unless they're attachments."
+    ]},
+    { name: "The Age of Heroes", type: "Plot", cost: 3, faction: "Neutral", date: "Mar 27, 2026", notes: [
+      "This plot resolves after forced reactions of The Mad King's Command or Weapons at the Door.",
+      "You still reveal the attachment even if you choose to put it into play."
+    ]},
+    { name: "Direwolf", type: "Attachment", cost: 2, faction: "Stark", date: "Mar 20, 2026", notes: [
+      "You may attach Direwolf to a character who already has an attachment of the same type; the older one is discarded.",
+      "If the attached character leaves play, Direwolf is discarded as a state-based action.",
+      "Direwolf does not trigger \"enters play\" abilities a second time if it changes control."
+    ]}
+  ];
+
+  myDecks = [
+    { name: "Stark Aggro", faction: "Stark", cards: 62, pct: "78%" },
+    { name: "Night's Watch Control", faction: "Night's Watch", cards: 60, pct: "60%" },
+    { name: "Lannister Economy", faction: "Lannister", cards: 61, pct: "45%" }
+  ];
+
+  allDecks = [
+    { name: "Stark Aggro — v3", faction: "Stark", cards: 62, edited: "2d ago" },
+    { name: "Stark Rush", faction: "Stark", cards: 60, edited: "1w ago" },
+    { name: "Winterfell Turtle", faction: "Stark", cards: 63, edited: "3w ago" },
+    { name: "Night's Watch Control", faction: "Night's Watch", cards: 60, edited: "4d ago" },
+    { name: "Lannister Economy", faction: "Lannister", cards: 61, edited: "2w ago" },
+    { name: "Golden Company", faction: "Lannister", cards: 59, edited: "1mo ago" },
+    { name: "Targ Burn", faction: "Targaryen", cards: 58, edited: "3w ago" },
+    { name: "Dragon Rush", faction: "Targaryen", cards: 60, edited: "5w ago" }
+  ];
+
+  newsItems = [
+    { title: "King's Landing set previews begin", date: "Aug 8 · site news" },
+    { title: "Weekly meta report: Targaryen on the rise", date: "Aug 5 · community" },
+    { title: "New tournament format announced", date: "Aug 1 · site news" }
+  ];
+
+  factionColors = {
+    "Stark": "oklch(0.55 0.05 255)",
+    "Lannister": "oklch(0.6 0.14 85)",
+    "Targaryen": "oklch(0.45 0.14 25)",
+    "Night's Watch": "oklch(0.4 0.01 255)"
+  };
+
+  allCards = [
+    { name: "Eddard Stark", type: "Character", cost: 4, faction: "Stark" },
+    { name: "Winterfell", type: "Location", cost: 3, faction: "Stark" },
+    { name: "Direwolf", type: "Attachment", cost: 2, faction: "Stark" },
+    { name: "Robb Stark", type: "Character", cost: 5, faction: "Stark" },
+    { name: "Catelyn Stark", type: "Character", cost: 3, faction: "Stark" },
+    { name: "The Wall", type: "Location", cost: 4, faction: "Night's Watch" },
+    { name: "Tywin Lannister", type: "Character", cost: 6, faction: "Lannister" },
+    { name: "Casterly Rock", type: "Location", cost: 4, faction: "Lannister" },
+    { name: "Daenerys Targaryen", type: "Character", cost: 5, faction: "Targaryen" },
+    { name: "Drogon", type: "Attachment", cost: 3, faction: "Targaryen" },
+    { name: "Cersei Lannister", type: "Character", cost: 4, faction: "Lannister" },
+    { name: "Wildfire Assault", type: "Event", cost: 2, faction: "Lannister" }
+  ];
+
+  goHome = () => this.setState({ tab: 'home' });
+  goSearch = () => this.setState({ tab: 'search' });
+  goDecks = () => this.setState({ tab: 'decks' });
+  toggleDeckFaction(name) {
+    this.setState(s => {
+      const has = s.deckActiveFactions.includes(name);
+      return { deckActiveFactions: has ? s.deckActiveFactions.filter(n => n !== name) : [...s.deckActiveFactions, name] };
+    });
+  }
+  clearDeckFilters = () => this.setState({ deckActiveFactions: [] });
+
+  agendaOptions = ["Alliance", "Banner of the Stag"];
+
+  goNewDeck = () => this.setState({ tab: 'builder', builderStep: 'house', selectedHouse: null, selectedAgenda: null, builderQuery: '', builderDeck: [] });
+  goEditDeck = () => this.setState({
+    tab: 'builder', builderStep: 'build', selectedHouse: 'Stark', selectedAgenda: 'Alliance', builderQuery: '',
+    builderDeck: [
+      { name: "Eddard Stark", count: 2 },
+      { name: "Robb Stark", count: 1 },
+      { name: "Winterfell", count: 2 },
+      { name: "Direwolf", count: 3 }
+    ]
+  });
+  selectHouse(name) { this.setState({ selectedHouse: name, builderStep: 'agenda' }); }
+  selectAgenda(name) { this.setState({ selectedAgenda: name }); }
+  startBuilding = () => this.setState({ builderStep: 'build' });
+  onBuilderQueryChange = (e) => this.setState({ builderQuery: e.target.value });
+  addBuilderCard(card) {
+    this.setState(s => {
+      const existing = s.builderDeck.find(r => r.name === card.name);
+      const builderDeck = existing
+        ? s.builderDeck.map(r => r.name === card.name ? { ...r, count: r.count + 1 } : r)
+        : [...s.builderDeck, { name: card.name, count: 1 }];
+      return { builderDeck };
+    });
+  }
+  goReviews = () => this.setState({ tab: 'reviews', detailCardName: null });
+  toggleReviewExpand(name) {
+    this.setState(s => {
+      const has = s.expandedReviews.includes(name);
+      return { expandedReviews: has ? s.expandedReviews.filter(n => n !== name) : [...s.expandedReviews, name] };
+    });
+  }
+  openDetail(name) { this.setState({ detailCardName: name, detailTab: 'rulings' }); }
+  closeDetail = () => this.setState({ detailCardName: null });
+  setDetailTab(t) { this.setState({ detailTab: t }); }
+
+  removeBuilderCard(name) {
+    this.setState(s => {
+      const row = s.builderDeck.find(r => r.name === name);
+      if (!row) return {};
+      const builderDeck = row.count > 1
+        ? s.builderDeck.map(r => r.name === name ? { ...r, count: r.count - 1 } : r)
+        : s.builderDeck.filter(r => r.name !== name);
+      return { builderDeck };
+    });
+  }
+  onQueryChange = (e) => this.setState({ query: e.target.value });
+  toggleFactionGroup = () => this.setState(s => ({ factionOpen: !s.factionOpen }));
+  toggleFaction(name) {
+    this.setState(s => {
+      const has = s.activeFactions.includes(name);
+      return { activeFactions: has ? s.activeFactions.filter(n => n !== name) : [...s.activeFactions, name] };
+    });
+  }
+  toggleCompare(name) {
+    this.setState(s => {
+      const has = s.compare.includes(name);
+      return { compare: has ? s.compare.filter(n => n !== name) : [...s.compare, name] };
+    });
+  }
+  clearFilters = () => this.setState({ query: '', activeFactions: [] });
+
+  renderVals() {
+    const s = this.state;
+    const q = s.query.trim().toLowerCase();
+    const filtered = this.allCards.filter(c =>
+      (!q || c.name.toLowerCase().includes(q)) &&
+      (s.activeFactions.length === 0 || s.activeFactions.includes(c.faction))
+    );
+    const tabBtn = (active) => ({
+      padding: '4px 2px',
+      borderBottom: active ? '2px solid oklch(0.5 0.14 255)' : '2px solid transparent',
+      color: active ? 'oklch(0.22 0.01 250)' : 'oklch(0.5 0.008 250)',
+      cursor: 'pointer',
+      fontWeight: active ? 600 : 400
+    });
+    const dq = s.deckActiveFactions;
+    const filteredDecks = this.allDecks.filter(d => dq.length === 0 || dq.includes(d.faction));
+    const deckTotal = s.builderDeck.reduce((sum, r) => sum + r.count, 0);
+    const detailTabStyle = (active) => ({
+      padding: '8px 14px', cursor: 'pointer',
+      borderBottom: active ? '2px solid oklch(0.68 0.15 25)' : '2px solid transparent',
+      color: active ? 'oklch(0.22 0.01 250)' : 'oklch(0.5 0.008 250)',
+      fontWeight: active ? 600 : 400
+    });
+    return {
+      isHome: s.tab === 'home',
+      isSearch: s.tab === 'search',
+      isDecks: s.tab === 'decks',
+      homeTabStyle: tabBtn(s.tab === 'home'),
+      searchTabStyle: tabBtn(s.tab === 'search'),
+      decksTabStyle: tabBtn(s.tab === 'decks'),
+      goHome: this.goHome,
+      goSearch: this.goSearch,
+      goDecks: this.goDecks,
+      deckFactions: ["Stark", "Lannister", "Targaryen", "Night's Watch"].map(name => ({
+        name,
+        onClick: () => this.toggleDeckFaction(name),
+        swatchStyle: {
+          width: '13px', height: '13px', borderRadius: '3px', flexShrink: 0,
+          border: '1px solid oklch(0.75 0.01 250)',
+          background: dq.includes(name) ? this.factionColors[name] : 'oklch(0.96 0.004 250)'
+        }
+      })),
+      clearDeckFilters: this.clearDeckFilters,
+      filteredDecks,
+      deckResultCount: filteredDecks.length,
+      deckFilterSuffix: dq.length > 0 ? ` — filtered to ${dq.join(', ')}` : '',
+      myDecks: this.myDecks,
+      newsItems: this.newsItems,
+      factions: ["Stark", "Lannister", "Targaryen"].map(name => ({
+        name,
+        onClick: () => this.toggleFaction(name),
+        swatchStyle: {
+          width: '13px', height: '13px', borderRadius: '3px', flexShrink: 0,
+          border: '1px solid oklch(0.75 0.01 250)',
+          background: s.activeFactions.includes(name) ? this.factionColors[name] : 'oklch(0.96 0.004 250)'
+        }
+      })),
+      query: s.query,
+      onQueryChange: this.onQueryChange,
+      factionOpen: s.factionOpen,
+      factionCaret: s.factionOpen ? '▾' : '▸',
+      toggleFactionGroup: this.toggleFactionGroup,
+      clearFilters: this.clearFilters,
+      resultCount: filtered.length,
+      filteredCards: filtered.map(c => ({
+        ...c,
+        onClick: () => this.toggleCompare(c.name),
+        selected: {
+          border: s.compare.includes(c.name) ? '1.5px solid oklch(0.5 0.14 255)' : '1px solid oklch(0.88 0.008 250)',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          overflow: 'hidden'
+        }
+      })),
+      hasCompare: s.compare.length > 0,
+      compareNames: s.compare.join(', '),
+
+      isBuilder: s.tab === 'builder',
+      goNewDeck: this.goNewDeck,
+      goEditDeck: this.goEditDeck,
+      isSelectStep: s.builderStep !== 'build',
+      isHouseStep: s.builderStep === 'house',
+      isAgendaStep: s.builderStep === 'agenda',
+      isBuildStep: s.builderStep === 'build',
+      selectedHouse: s.selectedHouse,
+      houses: ["Stark", "Lannister", "Targaryen", "Night's Watch"].map(name => ({
+        name,
+        onClick: () => this.selectHouse(name),
+        style: {
+          border: s.selectedHouse === name ? '1.5px solid oklch(0.5 0.14 255)' : '1px solid oklch(0.88 0.008 250)',
+          borderRadius: '8px', padding: '16px 8px', fontSize: '13px', cursor: 'pointer'
+        }
+      })),
+      agendas: [...this.agendaOptions, "None"].map(name => ({
+        name,
+        onClick: () => this.selectAgenda(name),
+        style: {
+          border: s.selectedAgenda === name ? '1.5px solid oklch(0.5 0.14 255)' : '1px solid oklch(0.88 0.008 250)',
+          borderRadius: '6px', width: '110px', cursor: 'pointer', overflow: 'hidden'
+        }
+      })),
+      startBuilding: this.startBuilding,
+      builderDeckName: s.selectedAgenda && s.builderStep === 'build' && s.builderDeck.length ? "Stark Aggro — v3" : `New ${s.selectedHouse || ''} Deck`,
+      autosaveLabel: 'Autosaved 12s ago',
+      builderQuery: s.builderQuery,
+      onBuilderQueryChange: this.onBuilderQueryChange,
+      builderResults: this.allCards
+        .filter(c => c.faction === s.selectedHouse)
+        .filter(c => !s.builderQuery.trim() || c.name.toLowerCase().includes(s.builderQuery.trim().toLowerCase()))
+        .map(c => ({ ...c, onClick: () => this.addBuilderCard(c) })),
+      builderDeck: s.builderDeck.map(r => ({ ...r, onRemove: () => this.removeBuilderCard(r.name) })),
+      deckCardTotal: deckTotal,
+      countColor: deckTotal >= 60 ? 'oklch(0.5 0.14 145)' : 'oklch(0.5 0.14 255)',
+      legalityRows: [
+        { format: 'Standard v2.1', joust: deckTotal >= 60, melee: deckTotal >= 50 },
+        { format: 'Valyrian v1.0', joust: deckTotal >= 55, melee: deckTotal >= 50 }
+      ].map(r => ({
+        format: r.format,
+        joustIcon: r.joust ? '✓' : '✗',
+        meleeIcon: r.melee ? '✓' : '✗',
+        joustStyle: { color: r.joust ? 'oklch(0.5 0.14 145)' : 'oklch(0.55 0.14 25)', fontWeight: 600 },
+        meleeStyle: { color: r.melee ? 'oklch(0.5 0.14 145)' : 'oklch(0.55 0.14 25)', fontWeight: 600 }
+      })),
+      curveBars: [20, 45, 90, 100, 70, 40, 15].map(h => ({
+        style: { flex: 1, height: h + '%', background: 'oklch(0.75 0.03 255)', borderRadius: '2px 2px 0 0' }
+      })),
+      warningsLabel: s.builderDeck.reduce((sum, r) => sum + r.count, 0) < 60 ? 'Deck needs more cards to be legal' : '0 deckbuilding warnings',
+
+      isReviews: s.tab === 'reviews',
+      reviewsTabStyle: tabBtn(s.tab === 'reviews'),
+      goReviews: this.goReviews,
+      hasDetailCard: !!s.detailCardName,
+      noDetailCard: !s.detailCardName,
+      closeDetail: this.closeDetail,
+      detailCard: (() => {
+        const c = this.reviewsData.find(r => r.name === s.detailCardName);
+        return c || { name: '', type: '', cost: '', faction: '', notes: [] };
+      })(),
+      isDetailOverview: s.detailTab === 'overview',
+      isDetailRulings: s.detailTab === 'rulings',
+      isDetailDecks: s.detailTab === 'decks',
+      setDetailTabOverview: () => this.setDetailTab('overview'),
+      setDetailTabRulings: () => this.setDetailTab('rulings'),
+      setDetailTabDecks: () => this.setDetailTab('decks'),
+      overviewTabStyle: detailTabStyle(s.detailTab === 'overview'),
+      rulingsTabStyle: detailTabStyle(s.detailTab === 'rulings'),
+      decksWithTabStyle: detailTabStyle(s.detailTab === 'decks'),
+      reviewItems: this.reviewsData.map(r => {
+        const expanded = s.expandedReviews.includes(r.name);
+        const visibleNotes = expanded ? r.notes : r.notes.slice(0, 2);
+        return {
+          ...r,
+          visibleNotes,
+          hasMore: r.notes.length > 2,
+          moreLabel: expanded ? '▾ show less' : `▾ show ${r.notes.length - 2} more`,
+          toggleExpand: () => this.toggleReviewExpand(r.name),
+          openDetail: () => this.openDetail(r.name)
+        };
+      }),
+
+      isRules: s.tab === 'rules',
+      rulesTabStyle: tabBtn(s.tab === 'rules'),
+      goRules: this.goRules,
+      isReferenceTab: s.rulesSubTab === 'reference',
+      isFaqTab: s.rulesSubTab === 'faq',
+      isDraftTab: s.rulesSubTab === 'draft',
+      isRestrictionsTab: s.rulesSubTab === 'restrictions',
+      isTournamentTab: s.rulesSubTab === 'tournament',
+      setRulesTabReference: () => this.setRulesTab('reference'),
+      setRulesTabFaq: () => this.setRulesTab('faq'),
+      setRulesTabDraft: () => this.setRulesTab('draft'),
+      setRulesTabRestrictions: () => this.setRulesTab('restrictions'),
+      setRulesTabTournament: () => this.setRulesTab('tournament'),
+      refTabStyle: detailTabStyle(s.rulesSubTab === 'reference'),
+      faqTabStyle: detailTabStyle(s.rulesSubTab === 'faq'),
+      draftTabStyle: detailTabStyle(s.rulesSubTab === 'draft'),
+      restrictionsTabStyle: detailTabStyle(s.rulesSubTab === 'restrictions'),
+      tournamentTabStyle: detailTabStyle(s.rulesSubTab === 'tournament'),
+      rulesQuery: s.rulesQuery,
+      onRulesQueryChange: this.onRulesQueryChange,
+      showLetterNav: !s.rulesQuery.trim(),
+      letterNav: (() => {
+        const activeLetters = [...new Set(this.glossaryTerms.map(t => t.letter))];
+        return "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').filter(l => activeLetters.includes(l)).map(l => ({
+          letter: l,
+          onClick: () => this.setRulesLetter(l),
+          style: {
+            fontSize: '11px', cursor: 'pointer', padding: '2px 4px',
+            color: s.rulesLetter === l ? 'oklch(0.5 0.14 25)' : 'oklch(0.55 0.008 250)',
+            fontWeight: s.rulesLetter === l ? 700 : 400
+          }
+        }));
+      })(),
+      termList: (() => {
+        const q = s.rulesQuery.trim().toLowerCase();
+        const list = q
+          ? this.glossaryTerms.filter(t => t.term.toLowerCase().includes(q))
+          : this.glossaryTerms.filter(t => t.letter === s.rulesLetter);
+        return list.map(t => ({
+          term: t.term,
+          onClick: () => this.setRulesTerm(t.term),
+          style: {
+            fontSize: '13px', cursor: 'pointer', padding: '6px 8px', borderRadius: '6px',
+            background: s.rulesTermName === t.term ? 'oklch(0.94 0.01 255)' : 'transparent',
+            color: s.rulesTermName === t.term ? 'oklch(0.4 0.14 255)' : 'oklch(0.3 0.008 250)'
+          }
+        }));
+      })(),
+      selectedTerm: this.glossaryTerms.find(t => t.term === s.rulesTermName) || { term: '', summary: '', related: '' },
+
+      langLabel: s.lang,
+      langOpen: s.langOpen,
+      toggleLangMenu: this.toggleLangMenu,
+      setLangEn: this.setLangEn,
+      setLangEs: this.setLangEs,
+      isLoggedIn: s.loggedIn,
+      isLoggedOut: !s.loggedIn,
+      accountOpen: s.accountOpen,
+      toggleAccountMenu: this.toggleAccountMenu,
+      logIn: this.logIn,
+      logOut: this.logOut
+    };
+  }
+}
+</script>
+</body>
+</html>

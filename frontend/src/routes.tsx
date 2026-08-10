@@ -1,0 +1,21 @@
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import { App } from "./App.js";
+import { CardsSearchPage } from "./pages/CardsSearchPage.js";
+import { DeckBuilderPage } from "./pages/DeckBuilderPage.js";
+import { ComingSoonPage } from "./pages/ComingSoonPage.js";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    children: [
+      { index: true, element: <Navigate to="/cards" replace /> },
+      { path: "cards", element: <CardsSearchPage /> },
+      { path: "decks/new", element: <DeckBuilderPage /> },
+      { path: "decks/:id/edit", element: <DeckBuilderPage /> },
+      { path: "decks", element: <ComingSoonPage title="Decks" /> },
+      { path: "reviews", element: <ComingSoonPage title="Reviews" /> },
+      { path: "rules", element: <ComingSoonPage title="Rules" /> },
+    ],
+  },
+]);
