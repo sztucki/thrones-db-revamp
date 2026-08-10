@@ -1,6 +1,6 @@
 {
-  "id": "bff515ec-f86b-4959-a8f4-77b31519c45b",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "60d797c0-c5c6-4f6d-b22f-f8ed975e4bd4",
+  "prevId": "bff515ec-f86b-4959-a8f4-77b31519c45b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -35,6 +35,12 @@
         "cost": {
           "name": "cost",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cost_raw": {
+          "name": "cost_raw",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         },
