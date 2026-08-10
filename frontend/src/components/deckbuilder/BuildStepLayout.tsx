@@ -70,6 +70,7 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
       <div className="flex-1">
         <div className="mb-3.5 flex items-center justify-between">
           <input
+            aria-label="Deck name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={commitName}
@@ -93,6 +94,7 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
         </div>
 
         <input
+          aria-label="Search card text"
           placeholder="Search card text…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}

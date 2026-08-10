@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiError } from "../../api/auth.js";
 import { useLogIn, useSignUp } from "../../hooks/useSession.js";
 
@@ -12,6 +12,14 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
   const logIn = useLogIn();
   const signUp = useSignUp();
   const pending = logIn.isPending || signUp.isPending;
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +42,9 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={mode === "login" ? "Log in" : "Sign up"}
         className="w-[340px] rounded-lg border border-border bg-surface p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
@@ -58,6 +69,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
           <input
             type="email"
             required
+            aria-label="Email"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -67,6 +79,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
             <input
               required
               minLength={3}
+              aria-label="Username"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -77,6 +90,7 @@ export function AuthModal({ onClose }: { onClose: () => void }) {
             type="password"
             required
             minLength={8}
+            aria-label="Password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

@@ -1,4 +1,5 @@
 import type { Card } from "@thronesdb/shared";
+import { clickableProps } from "../../lib/a11y.js";
 
 export function AgendaStep({
   houseName,
@@ -20,7 +21,8 @@ export function AgendaStep({
 
       <div className="mb-4 flex justify-center">
         <div
-          onClick={() => onSelectAgenda(null)}
+          {...clickableProps(() => onSelectAgenda(null))}
+          aria-pressed={selectedAgendaCode === null}
           className={`cursor-pointer rounded px-4 py-3 text-[13px] ${
             selectedAgendaCode === null ? "border-[1.5px] border-accent" : "border border-border"
           }`}
@@ -33,7 +35,8 @@ export function AgendaStep({
         {agendas.map((a) => (
           <div
             key={a.code}
-            onClick={() => onSelectAgenda(a.code)}
+            {...clickableProps(() => onSelectAgenda(a.code))}
+            aria-pressed={selectedAgendaCode === a.code}
             className={`cursor-pointer overflow-hidden rounded ${
               selectedAgendaCode === a.code ? "border-[1.5px] border-accent" : "border border-border"
             }`}
@@ -44,12 +47,13 @@ export function AgendaStep({
         ))}
       </div>
 
-      <div
+      <button
+        type="button"
         onClick={onStartBuilding}
-        className="inline-block cursor-pointer rounded border-[1.5px] border-accent px-6 py-2.5 text-sm font-medium text-accent"
+        className="rounded border-[1.5px] border-accent px-6 py-2.5 text-sm font-medium text-accent"
       >
         Start building →
-      </div>
+      </button>
     </div>
   );
 }

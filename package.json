@@ -4,14 +4,15 @@
   "workspaces": [
     "frontend",
     "backend",
-    "packages/*"
+    "packages/*",
+    "e2e"
   ],
   "scripts": {
     "dev": "concurrently -n backend,frontend -c blue,green \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
     "build": "npm run build --workspace=packages/shared && npm run build --workspace=backend && npm run build --workspace=frontend",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "test": "npm run test --workspace=frontend --workspace=backend --workspace=packages/shared --if-present",
     "db:migrate": "npm run db:migrate --workspace=backend",
     "db:seed": "npm run db:seed --workspace=backend"
   },

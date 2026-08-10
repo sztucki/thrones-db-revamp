@@ -1,4 +1,5 @@
 import type { Card } from "@thronesdb/shared";
+import { clickableProps } from "../../lib/a11y.js";
 
 export function CardTile({
   card,
@@ -11,7 +12,8 @@ export function CardTile({
 }) {
   return (
     <div
-      onClick={onClick}
+      {...clickableProps(onClick)}
+      aria-pressed={selected}
       className={`cursor-pointer overflow-hidden rounded ${
         selected ? "border-[1.5px] border-accent" : "border border-border"
       }`}

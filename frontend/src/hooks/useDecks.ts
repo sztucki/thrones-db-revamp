@@ -4,8 +4,8 @@ import { createDeck, deleteDeck, getDeck, listDecks, setDeckCard, updateDeck } f
 
 const deckKey = (id: string) => ["deck", id];
 
-export function useDecks() {
-  return useQuery({ queryKey: ["decks"], queryFn: listDecks });
+export function useDecks(enabled = true) {
+  return useQuery({ queryKey: ["decks"], queryFn: listDecks, enabled });
 }
 
 export function useDeck(id: string | undefined) {

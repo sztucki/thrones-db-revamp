@@ -1,4 +1,5 @@
 import type { Faction } from "@thronesdb/shared";
+import { clickableProps } from "../../lib/a11y.js";
 
 export function HouseStep({
   factions,
@@ -17,7 +18,7 @@ export function HouseStep({
           .map((f) => (
             <div
               key={f.code}
-              onClick={() => onSelect(f.code)}
+              {...clickableProps(() => onSelect(f.code))}
               className="cursor-pointer rounded border border-border px-3 py-4 text-[13px] hover:border-accent"
             >
               <div className="mx-auto mb-2 h-8 w-8 rounded-full bg-surface" />

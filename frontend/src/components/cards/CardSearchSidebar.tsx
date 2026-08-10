@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Faction } from "@thronesdb/shared";
+import { clickableProps } from "../../lib/a11y.js";
 
 const FACTION_COLORS: Record<string, string> = {
   stark: "oklch(0.55 0.05 255)",
@@ -35,6 +36,7 @@ export function CardSearchSidebar({
   return (
     <div className="w-[220px] flex-none">
       <input
+        aria-label="Search card text"
         placeholder="Search card text…"
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
@@ -43,7 +45,8 @@ export function CardSearchSidebar({
 
       <div className="mb-3 border-b border-border pb-3">
         <div
-          onClick={() => setFactionOpen((v) => !v)}
+          {...clickableProps(() => setFactionOpen((v) => !v))}
+          aria-expanded={factionOpen}
           className="mb-2 flex cursor-pointer justify-between text-[13px] font-semibold"
         >
           <span>Faction</span>
@@ -56,7 +59,8 @@ export function CardSearchSidebar({
               .map((f) => (
                 <div
                   key={f.code}
-                  onClick={() => onToggleFaction(f.code)}
+                  {...clickableProps(() => onToggleFaction(f.code))}
+                  aria-pressed={activeFactions.includes(f.code)}
                   className="flex cursor-pointer items-center gap-2 text-[13px]"
                 >
                   <div

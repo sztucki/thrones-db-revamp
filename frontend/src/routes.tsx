@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { App } from "./App.js";
 import { CardsSearchPage } from "./pages/CardsSearchPage.js";
 import { DeckBuilderPage } from "./pages/DeckBuilderPage.js";
+import { DecksListPage } from "./pages/DecksListPage.js";
 import { ComingSoonPage } from "./pages/ComingSoonPage.js";
 
 export const router = createBrowserRouter([
@@ -13,7 +14,7 @@ export const router = createBrowserRouter([
       { path: "cards", element: <CardsSearchPage /> },
       { path: "decks/new", element: <DeckBuilderPage /> },
       { path: "decks/:id/edit", element: <DeckBuilderPage /> },
-      { path: "decks", element: <ComingSoonPage title="Decks" /> },
+      { path: "decks", element: <DecksListPage /> },
       { path: "reviews", element: <ComingSoonPage title="Reviews" /> },
       { path: "rules", element: <ComingSoonPage title="Rules" /> },
     ],

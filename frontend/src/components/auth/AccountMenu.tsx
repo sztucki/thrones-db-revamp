@@ -10,6 +10,8 @@ export function AccountMenu({ user }: { user: User }) {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
+        aria-label={`Account menu for ${user.username}`}
+        aria-expanded={open}
         className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-bg"
       >
         {user.username.slice(0, 1).toUpperCase()}

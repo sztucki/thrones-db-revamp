@@ -1,4 +1,5 @@
 import type { Card, DeckCardEntry } from "@thronesdb/shared";
+import { clickableProps } from "../../lib/a11y.js";
 
 export function DeckList({
   entries,
@@ -22,7 +23,8 @@ export function DeckList({
       {rows.map(({ entry, card }) => (
         <div
           key={entry.cardCode}
-          onClick={() => onRemoveOne(entry.cardCode)}
+          {...clickableProps(() => onRemoveOne(entry.cardCode))}
+          aria-label={`Remove one copy of ${card?.name ?? entry.cardCode}`}
           className="flex cursor-pointer justify-between border-b border-border py-1.5 text-xs hover:text-danger"
           title="Click to remove one copy"
         >

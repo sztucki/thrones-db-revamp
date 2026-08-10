@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSession } from "../hooks/useSession.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useCreateDeck, useDeck } from "../hooks/useDecks.js";
@@ -69,5 +70,15 @@ function EditDeck({ deckId }: { deckId: string }) {
 
 export function DeckBuilderPage() {
   const { id } = useParams<{ id: string }>();
+  const sessionQuery = useSession();
+
+  if (sessionQuery.data && !sessionQuery.data.user) {
+    return (
+      <div className="mx-auto max-w-3xl px-7 py-16 text-center text-sm text-textMuted">
+        Log in to build a deck.
+      </div>
+    );
+  }
+
   return id ? <EditDeck deckId={id} /> : <NewDeckWizard />;
 }
