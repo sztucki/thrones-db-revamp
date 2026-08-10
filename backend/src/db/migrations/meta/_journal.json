@@ -15,6 +15,13 @@
       "when": 1786386973486,
       "tag": "0001_wonderful_iron_lad",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786388004991,
+      "tag": "0002_bitter_karnak",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useSession } from "../../hooks/useSession.js";
+import { AccountMenu } from "../auth/AccountMenu.js";
+import { AuthModal } from "../auth/AuthModal.js";
 
 const navItems = [
   { to: "/cards", label: "Cards" },
@@ -8,6 +12,9 @@ const navItems = [
 ];
 
 export function Header() {
+  const { data } = useSession();
+  const [authOpen, setAuthOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-bg px-7 py-3.5">
       <div className="flex items-center gap-7">
@@ -34,10 +41,19 @@ export function Header() {
         <div className="flex items-center gap-1 text-[13px] text-textMuted">
           EN <span className="text-[9px]">▾</span>
         </div>
-        <button className="rounded-sm border border-accent px-4 py-1.5 text-[13px] font-medium text-accent">
-          Log in
-        </button>
+        {data?.user ? (
+          <AccountMenu user={data.user} />
+        ) : (
+          <button
+            onClick={() => setAuthOpen(true)}
+            className="rounded-sm border border-accent px-4 py-1.5 text-[13px] font-medium text-accent"
+          >
+            Log in
+          </button>
+        )}
       </div>
+
+      {authOpen && <AuthModal onClose={() => setAuthOpen(false)} />}
     </header>
   );
 }
