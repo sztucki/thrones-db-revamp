@@ -5,6 +5,7 @@ import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useTraits } from "../hooks/useTraits.js";
 import { usePacks } from "../hooks/usePacks.js";
+import { clickableProps } from "../lib/a11y.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
@@ -40,6 +41,7 @@ export function CardsSearchPage() {
   );
   const costMin = searchParams.has("costMin") ? Number(searchParams.get("costMin")) : undefined;
   const costMax = searchParams.has("costMax") ? Number(searchParams.get("costMax")) : undefined;
+  const sortDir = searchParams.get("dir") === "desc" ? "desc" : "asc";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
@@ -57,6 +59,7 @@ export function CardsSearchPage() {
     military: activeIcons.includes("military") || undefined,
     intrigue: activeIcons.includes("intrigue") || undefined,
     power: activeIcons.includes("power") || undefined,
+    sortDir,
     costMin,
     costMax,
     limit: PAGE_SIZE,
@@ -72,6 +75,7 @@ export function CardsSearchPage() {
     icons?: string[];
     costMin?: number;
     costMax?: number;
+    sortDir?: "asc" | "desc";
     page?: number;
   }) {
     const params = new URLSearchParams(searchParams);
@@ -109,6 +113,10 @@ export function CardsSearchPage() {
       if (next.costMax !== undefined) params.set("costMax", String(next.costMax));
       else params.delete("costMax");
     }
+    if (next.sortDir !== undefined) {
+      if (next.sortDir === "desc") params.set("dir", "desc");
+      else params.delete("dir");
+    }
     if (next.page !== undefined) {
       if (next.page > 1) params.set("page", String(next.page));
       else params.delete("page");
@@ -121,12 +129,17 @@ export function CardsSearchPage() {
       next.traits !== undefined ||
       next.packs !== undefined ||
       next.icons !== undefined ||
+      next.sortDir !== undefined ||
       "costMin" in next ||
       "costMax" in next
     ) {
       params.delete("page");
     }
     setSearchParams(params, { replace: true });
+  }
+
+  function toggleSortDir() {
+    updateParams({ sortDir: sortDir === "asc" ? "desc" : "asc" });
   }
 
   function toggleFaction(code: string) {
@@ -210,7 +223,13 @@ export function CardsSearchPage() {
                 ? "0 cards"
                 : `Showing ${rangeStart}–${rangeEnd} of ${total} cards`}
           </div>
-          <div className="text-[13px] text-textMuted">Sort: Name ▾</div>
+          <div
+            {...clickableProps(toggleSortDir)}
+            aria-label={`Sort by name, ${sortDir === "asc" ? "ascending" : "descending"}`}
+            className="cursor-pointer text-[13px] text-textMuted"
+          >
+            Sort: Name {sortDir === "asc" ? "▾" : "▴"}
+          </div>
         </div>
 
         {searchQuery.isError && (

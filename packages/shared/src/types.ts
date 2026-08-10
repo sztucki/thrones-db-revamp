@@ -74,6 +74,7 @@ export interface CardSearchQuery {
   military?: boolean;
   intrigue?: boolean;
   power?: boolean;
+  sortDir?: "asc" | "desc";
   limit?: number;
   offset?: number;
 }

@@ -1,4 +1,4 @@
-import { and, asc, eq, gte, inArray, lte, sql, SQL } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, lte, sql, SQL } from "drizzle-orm";
 import { db } from "../db/client.js";
 import { cards } from "../db/schema.js";
 
@@ -15,6 +15,7 @@ export interface CardSearchParams {
   military?: boolean;
   intrigue?: boolean;
   power?: boolean;
+  sortDir?: "asc" | "desc";
   limit?: number;
   offset?: number;
 }
@@ -86,9 +87,10 @@ export async function searchCards(params: CardSearchParams) {
   }
 
   const where = conditions.length ? and(...conditions) : undefined;
+  const orderBy = params.sortDir === "desc" ? desc(cards.name) : asc(cards.name);
 
   const [items, totalRow] = await Promise.all([
-    db.select().from(cards).where(where).orderBy(asc(cards.name)).limit(limit).offset(offset),
+    db.select().from(cards).where(where).orderBy(orderBy).limit(limit).offset(offset),
     db.select({ count: sql<number>`count(*)::int` }).from(cards).where(where),
   ]);
 

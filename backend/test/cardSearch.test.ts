@@ -117,6 +117,16 @@ describe("searchCards", () => {
     expect(codes).not.toContain("TEST02");
   });
 
+  it("sorts by name descending when requested", async () => {
+    const result = await searchCards({
+      traits: ["QaMarkerLord", "QaMarkerStronghold"],
+      sortDir: "desc",
+    });
+    const index01 = result.items.findIndex((c) => c.code === "TEST01");
+    const index02 = result.items.findIndex((c) => c.code === "TEST02");
+    expect(index02).toBeLessThan(index01);
+  });
+
   it("reports total distinct from the page size", async () => {
     const result = await searchCards({ faction: ["stark"], limit: 1 });
     expect(result.items).toHaveLength(1);

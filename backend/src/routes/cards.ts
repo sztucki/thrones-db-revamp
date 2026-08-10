@@ -27,6 +27,7 @@ const searchQuerySchema = z.object({
   military: boolFlag(),
   intrigue: boolFlag(),
   power: boolFlag(),
+  sortDir: z.enum(["asc", "desc"]).optional(),
   costMin: z.coerce.number().int().min(0).optional(),
   costMax: z.coerce.number().int().min(0).optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),

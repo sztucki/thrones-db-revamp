@@ -13,6 +13,7 @@ export function searchCards(query: CardSearchQuery): Promise<CardSearchResult> {
   if (query.military) params.set("military", "1");
   if (query.intrigue) params.set("intrigue", "1");
   if (query.power) params.set("power", "1");
+  if (query.sortDir) params.set("sortDir", query.sortDir);
   if (query.costMin !== undefined) params.set("costMin", String(query.costMin));
   if (query.costMax !== undefined) params.set("costMax", String(query.costMax));
   if (query.limit !== undefined) params.set("limit", String(query.limit));
