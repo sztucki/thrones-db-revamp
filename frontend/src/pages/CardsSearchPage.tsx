@@ -23,6 +23,8 @@ export function CardsSearchPage() {
     () => (searchParams.get("type")?.split(",").filter(Boolean) as CardTypeCode[]) ?? [],
     [searchParams]
   );
+  const costMin = searchParams.has("costMin") ? Number(searchParams.get("costMin")) : undefined;
+  const costMax = searchParams.has("costMax") ? Number(searchParams.get("costMax")) : undefined;
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
@@ -31,11 +33,20 @@ export function CardsSearchPage() {
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
     type: activeTypes.length ? activeTypes : undefined,
+    costMin,
+    costMax,
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
   });
 
-  function updateParams(next: { q?: string; faction?: string[]; type?: CardTypeCode[]; page?: number }) {
+  function updateParams(next: {
+    q?: string;
+    faction?: string[];
+    type?: CardTypeCode[];
+    costMin?: number;
+    costMax?: number;
+    page?: number;
+  }) {
     const params = new URLSearchParams(searchParams);
     if (next.q !== undefined) {
       if (next.q) params.set("q", next.q);
@@ -49,12 +60,26 @@ export function CardsSearchPage() {
       if (next.type.length) params.set("type", next.type.join(","));
       else params.delete("type");
     }
+    if ("costMin" in next) {
+      if (next.costMin !== undefined) params.set("costMin", String(next.costMin));
+      else params.delete("costMin");
+    }
+    if ("costMax" in next) {
+      if (next.costMax !== undefined) params.set("costMax", String(next.costMax));
+      else params.delete("costMax");
+    }
     if (next.page !== undefined) {
       if (next.page > 1) params.set("page", String(next.page));
       else params.delete("page");
     }
     // Any change to filters or search text invalidates the current page.
-    if (next.q !== undefined || next.faction !== undefined || next.type !== undefined) {
+    if (
+      next.q !== undefined ||
+      next.faction !== undefined ||
+      next.type !== undefined ||
+      "costMin" in next ||
+      "costMax" in next
+    ) {
       params.delete("page");
     }
     setSearchParams(params, { replace: true });
@@ -103,6 +128,9 @@ export function CardsSearchPage() {
         onToggleFaction={toggleFaction}
         activeTypes={activeTypes}
         onToggleType={toggleType}
+        costMin={costMin}
+        costMax={costMax}
+        onCostChange={updateParams}
         onClearFilters={clearFilters}
       />
 

@@ -24,7 +24,7 @@ const TYPE_OPTIONS: { code: CardTypeCode; label: string }[] = [
   { code: "title", label: "Title" },
 ];
 
-const STUB_GROUPS = ["Cost", "Traits", "Set / Icons"];
+const STUB_GROUPS = ["Traits", "Set / Icons"];
 
 export function CardSearchSidebar({
   query,
@@ -34,6 +34,9 @@ export function CardSearchSidebar({
   onToggleFaction,
   activeTypes,
   onToggleType,
+  costMin,
+  costMax,
+  onCostChange,
   onClearFilters,
 }: {
   query: string;
@@ -43,10 +46,20 @@ export function CardSearchSidebar({
   onToggleFaction: (code: string) => void;
   activeTypes: CardTypeCode[];
   onToggleType: (code: CardTypeCode) => void;
+  costMin: number | undefined;
+  costMax: number | undefined;
+  onCostChange: (next: { costMin?: number; costMax?: number }) => void;
   onClearFilters: () => void;
 }) {
   const [factionOpen, setFactionOpen] = useState(true);
   const [typeOpen, setTypeOpen] = useState(true);
+  const [costOpen, setCostOpen] = useState(true);
+
+  function parseCostInput(raw: string): number | undefined {
+    if (raw === "") return undefined;
+    const n = Number(raw);
+    return Number.isFinite(n) && n >= 0 ? n : undefined;
+  }
 
   return (
     <div className="w-[220px] flex-none">
@@ -124,6 +137,42 @@ export function CardSearchSidebar({
                 {t.label}
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mb-3 border-b border-border pb-3">
+        <div
+          {...clickableProps(() => setCostOpen((v) => !v))}
+          aria-expanded={costOpen}
+          className="mb-2 flex cursor-pointer justify-between text-[13px] font-semibold"
+        >
+          <span>Cost</span>
+          <span>{costOpen ? "▾" : "▸"}</span>
+        </div>
+        {costOpen && (
+          <div className="flex items-center gap-2 pl-0.5 text-[13px]">
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              aria-label="Minimum cost"
+              placeholder="Min"
+              value={costMin ?? ""}
+              onChange={(e) => onCostChange({ costMin: parseCostInput(e.target.value) })}
+              className="w-16 rounded border border-border bg-surface px-2 py-1 text-text"
+            />
+            <span className="text-textMuted">–</span>
+            <input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              aria-label="Maximum cost"
+              placeholder="Max"
+              value={costMax ?? ""}
+              onChange={(e) => onCostChange({ costMax: parseCostInput(e.target.value) })}
+              className="w-16 rounded border border-border bg-surface px-2 py-1 text-text"
+            />
           </div>
         )}
       </div>
