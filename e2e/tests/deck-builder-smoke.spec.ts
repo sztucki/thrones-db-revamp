@@ -8,9 +8,9 @@ test("cards search, and the full house -> agenda -> build deck flow, persist acr
   const username = `e2euser${unique}`;
 
   await page.goto("/cards");
-  await expect(page.getByText(/cards — updates live/)).toBeVisible();
+  await expect(page.getByText(/of \d+ cards/)).toBeVisible();
   await page.getByLabel("Search card text").fill("stark");
-  await expect(page.getByText(/cards — updates live/)).toBeVisible();
+  await expect(page.getByText(/of \d+ cards/)).toBeVisible();
 
   await page.getByRole("button", { name: "Log in" }).click();
   await page.getByRole("button", { name: "Sign up" }).click();

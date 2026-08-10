@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
@@ -18,6 +18,7 @@ export function CardsSearchPage() {
     () => (searchParams.get("faction")?.split(",").filter(Boolean) ?? []),
     [searchParams]
   );
+  const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
   const factionsQuery = useFactions();
@@ -25,9 +26,10 @@ export function CardsSearchPage() {
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
     limit: PAGE_SIZE,
+    offset: (page - 1) * PAGE_SIZE,
   });
 
-  function updateParams(next: { q?: string; faction?: string[] }) {
+  function updateParams(next: { q?: string; faction?: string[]; page?: number }) {
     const params = new URLSearchParams(searchParams);
     if (next.q !== undefined) {
       if (next.q) params.set("q", next.q);
@@ -36,6 +38,14 @@ export function CardsSearchPage() {
     if (next.faction !== undefined) {
       if (next.faction.length) params.set("faction", next.faction.join(","));
       else params.delete("faction");
+    }
+    if (next.page !== undefined) {
+      if (next.page > 1) params.set("page", String(next.page));
+      else params.delete("page");
+    }
+    // Any change to filters or search text invalidates the current page.
+    if (next.q !== undefined || next.faction !== undefined) {
+      params.delete("page");
     }
     setSearchParams(params, { replace: true });
   }
@@ -57,6 +67,17 @@ export function CardsSearchPage() {
   const total = searchQuery.data?.total ?? 0;
   const compareCards = items.filter((c) => compare.includes(c.code));
 
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+  const rangeEnd = Math.min(total, page * PAGE_SIZE);
+
+  useEffect(() => {
+    if (!searchQuery.isLoading && page > totalPages) {
+      updateParams({ page: totalPages });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery.isLoading, page, totalPages]);
+
   return (
     <div className="mx-auto flex max-w-6xl gap-6 px-7 py-6">
       <CardSearchSidebar
@@ -71,7 +92,11 @@ export function CardsSearchPage() {
       <div className="flex-1">
         <div className="mb-3.5 flex items-center justify-between">
           <div className="text-[13px] text-accent">
-            {searchQuery.isLoading ? "Loading…" : `${total} cards — updates live`}
+            {searchQuery.isLoading
+              ? "Loading…"
+              : total === 0
+                ? "0 cards"
+                : `Showing ${rangeStart}–${rangeEnd} of ${total} cards`}
           </div>
           <div className="text-[13px] text-textMuted">Sort: Name ▾</div>
         </div>
@@ -87,6 +112,30 @@ export function CardsSearchPage() {
         )}
 
         <CardGrid cards={items} compare={compare} onToggleCompare={toggleCompare} />
+
+        {totalPages > 1 && (
+          <div className="mt-5 flex items-center justify-center gap-3 text-[13px]">
+            <button
+              type="button"
+              disabled={page <= 1}
+              onClick={() => updateParams({ page: page - 1 })}
+              className="rounded-sm border border-border px-3 py-1.5 text-textMuted disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              ← Previous
+            </button>
+            <div className="text-textMuted">
+              Page {page} of {totalPages}
+            </div>
+            <button
+              type="button"
+              disabled={page >= totalPages}
+              onClick={() => updateParams({ page: page + 1 })}
+              className="rounded-sm border border-border px-3 py-1.5 text-textMuted disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next →
+            </button>
+          </div>
+        )}
 
         <div className="mt-4 text-xs text-textMuted">
           Rulings for a card? Check the Reviews section.
