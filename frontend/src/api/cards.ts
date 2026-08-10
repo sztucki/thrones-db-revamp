@@ -1,0 +1,23 @@
+import type { Card, CardSearchQuery, CardSearchResult, Faction } from "@thronesdb/shared";
+import { apiFetch } from "./client.js";
+
+export function searchCards(query: CardSearchQuery): Promise<CardSearchResult> {
+  const params = new URLSearchParams();
+  if (query.q) params.set("q", query.q);
+  if (query.faction?.length) params.set("faction", query.faction.join(","));
+  if (query.type?.length) params.set("type", query.type.join(","));
+  if (query.traits?.length) params.set("traits", query.traits.join(","));
+  if (query.costMin !== undefined) params.set("costMin", String(query.costMin));
+  if (query.costMax !== undefined) params.set("costMax", String(query.costMax));
+  if (query.limit !== undefined) params.set("limit", String(query.limit));
+  if (query.offset !== undefined) params.set("offset", String(query.offset));
+  return apiFetch<CardSearchResult>(`/cards?${params.toString()}`);
+}
+
+export function getFactions(): Promise<{ items: Faction[] }> {
+  return apiFetch<{ items: Faction[] }>("/factions");
+}
+
+export function getCard(code: string): Promise<Card> {
+  return apiFetch<Card>(`/cards/${code}`);
+}

@@ -11,6 +11,7 @@ export interface Faction {
   code: string;
   name: string;
   isPrimary: boolean;
+  octgnId: string | null;
 }
 
 export interface Cycle {
@@ -34,11 +35,13 @@ export interface Card {
   typeCode: CardTypeCode;
   factionCode: string;
   cost: number | null;
+  costRaw: string | null;
   income: number | null;
   initiative: number | null;
   claim: number | null;
   reserve: number | null;
   text: string;
+  traitsRaw: string;
   traits: string[];
   isLoyal: boolean;
   isUnique: boolean;
@@ -47,11 +50,15 @@ export interface Card {
   isPower: boolean;
   strength: number | null;
   deckLimit: number;
+  quantityInPack: number;
   packCode: string;
   illustrator: string | null;
   flavor: string | null;
+  octgnId: string | null;
   position: number;
   imageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CardSearchQuery {
