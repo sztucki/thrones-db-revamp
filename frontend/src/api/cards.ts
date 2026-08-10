@@ -18,6 +18,10 @@ export function getFactions(): Promise<{ items: Faction[] }> {
   return apiFetch<{ items: Faction[] }>("/factions");
 }
 
+export function getTraits(): Promise<{ items: string[] }> {
+  return apiFetch<{ items: string[] }>("/traits");
+}
+
 export function getCard(code: string): Promise<Card> {
   return apiFetch<Card>(`/cards/${code}`);
 }

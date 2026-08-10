@@ -69,3 +69,10 @@ export async function getCardByCode(code: string) {
   const [card] = await db.select().from(cards).where(eq(cards.code, code)).limit(1);
   return card ?? null;
 }
+
+export async function listTraits(): Promise<string[]> {
+  const rows = await db.execute<{ trait: string }>(
+    sql`select distinct trait from ${cards}, unnest(${cards.traits}) as trait order by trait`
+  );
+  return rows.rows.map((r) => r.trait);
+}

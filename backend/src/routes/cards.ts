@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { getCardByCode, searchCards } from "../services/cardSearch.js";
+import { getCardByCode, listTraits, searchCards } from "../services/cardSearch.js";
 
 export const cardsRouter = Router();
 
@@ -29,6 +29,11 @@ cardsRouter.get("/cards", async (req, res) => {
   }
   const result = await searchCards(parsed.data);
   res.json(result);
+});
+
+cardsRouter.get("/traits", async (_req, res) => {
+  const items = await listTraits();
+  res.json({ items });
 });
 
 cardsRouter.get("/cards/:code", async (req, res) => {

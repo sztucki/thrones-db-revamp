@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import type { CardTypeCode } from "@thronesdb/shared";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
+import { useTraits } from "../hooks/useTraits.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
@@ -23,16 +24,22 @@ export function CardsSearchPage() {
     () => (searchParams.get("type")?.split(",").filter(Boolean) as CardTypeCode[]) ?? [],
     [searchParams]
   );
+  const activeTraits = useMemo(
+    () => (searchParams.get("traits")?.split(",").filter(Boolean) ?? []),
+    [searchParams]
+  );
   const costMin = searchParams.has("costMin") ? Number(searchParams.get("costMin")) : undefined;
   const costMax = searchParams.has("costMax") ? Number(searchParams.get("costMax")) : undefined;
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
   const factionsQuery = useFactions();
+  const traitsQuery = useTraits();
   const searchQuery = useCardSearch({
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
     type: activeTypes.length ? activeTypes : undefined,
+    traits: activeTraits.length ? activeTraits : undefined,
     costMin,
     costMax,
     limit: PAGE_SIZE,
@@ -43,6 +50,7 @@ export function CardsSearchPage() {
     q?: string;
     faction?: string[];
     type?: CardTypeCode[];
+    traits?: string[];
     costMin?: number;
     costMax?: number;
     page?: number;
@@ -59,6 +67,10 @@ export function CardsSearchPage() {
     if (next.type !== undefined) {
       if (next.type.length) params.set("type", next.type.join(","));
       else params.delete("type");
+    }
+    if (next.traits !== undefined) {
+      if (next.traits.length) params.set("traits", next.traits.join(","));
+      else params.delete("traits");
     }
     if ("costMin" in next) {
       if (next.costMin !== undefined) params.set("costMin", String(next.costMin));
@@ -77,6 +89,7 @@ export function CardsSearchPage() {
       next.q !== undefined ||
       next.faction !== undefined ||
       next.type !== undefined ||
+      next.traits !== undefined ||
       "costMin" in next ||
       "costMax" in next
     ) {
@@ -93,6 +106,11 @@ export function CardsSearchPage() {
   function toggleType(code: CardTypeCode) {
     const has = activeTypes.includes(code);
     updateParams({ type: has ? activeTypes.filter((t) => t !== code) : [...activeTypes, code] });
+  }
+
+  function toggleTrait(trait: string) {
+    const has = activeTraits.includes(trait);
+    updateParams({ traits: has ? activeTraits.filter((t) => t !== trait) : [...activeTraits, trait] });
   }
 
   function clearFilters() {
@@ -131,6 +149,9 @@ export function CardsSearchPage() {
         costMin={costMin}
         costMax={costMax}
         onCostChange={updateParams}
+        traits={traitsQuery.data?.items ?? []}
+        activeTraits={activeTraits}
+        onToggleTrait={toggleTrait}
         onClearFilters={clearFilters}
       />
 

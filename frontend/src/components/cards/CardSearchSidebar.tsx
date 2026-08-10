@@ -24,7 +24,7 @@ const TYPE_OPTIONS: { code: CardTypeCode; label: string }[] = [
   { code: "title", label: "Title" },
 ];
 
-const STUB_GROUPS = ["Traits", "Set / Icons"];
+const STUB_GROUPS = ["Set / Icons"];
 
 export function CardSearchSidebar({
   query,
@@ -37,6 +37,9 @@ export function CardSearchSidebar({
   costMin,
   costMax,
   onCostChange,
+  traits,
+  activeTraits,
+  onToggleTrait,
   onClearFilters,
 }: {
   query: string;
@@ -49,11 +52,20 @@ export function CardSearchSidebar({
   costMin: number | undefined;
   costMax: number | undefined;
   onCostChange: (next: { costMin?: number; costMax?: number }) => void;
+  traits: string[];
+  activeTraits: string[];
+  onToggleTrait: (trait: string) => void;
   onClearFilters: () => void;
 }) {
   const [factionOpen, setFactionOpen] = useState(true);
   const [typeOpen, setTypeOpen] = useState(true);
   const [costOpen, setCostOpen] = useState(true);
+  const [traitsOpen, setTraitsOpen] = useState(true);
+  const [traitFilter, setTraitFilter] = useState("");
+
+  const visibleTraits = traits.filter(
+    (t) => activeTraits.includes(t) || t.toLowerCase().includes(traitFilter.toLowerCase())
+  );
 
   function parseCostInput(raw: string): number | undefined {
     if (raw === "") return undefined;
@@ -131,7 +143,7 @@ export function CardSearchSidebar({
                   }}
                 >
                   {activeTypes.includes(t.code) && (
-                    <span className="text-[9px] leading-none text-bg">✓</span>
+                    <span aria-hidden="true" className="text-[9px] leading-none text-bg">✓</span>
                   )}
                 </div>
                 {t.label}
@@ -174,6 +186,53 @@ export function CardSearchSidebar({
               className="w-16 rounded border border-border bg-surface px-2 py-1 text-text"
             />
           </div>
+        )}
+      </div>
+
+      <div className="mb-3 border-b border-border pb-3">
+        <div
+          {...clickableProps(() => setTraitsOpen((v) => !v))}
+          aria-expanded={traitsOpen}
+          className="mb-2 flex cursor-pointer justify-between text-[13px] font-semibold"
+        >
+          <span>Traits{activeTraits.length > 0 ? ` (${activeTraits.length})` : ""}</span>
+          <span>{traitsOpen ? "▾" : "▸"}</span>
+        </div>
+        {traitsOpen && (
+          <>
+            <input
+              aria-label="Filter traits"
+              placeholder="Filter traits…"
+              value={traitFilter}
+              onChange={(e) => setTraitFilter(e.target.value)}
+              className="mb-2 w-full rounded border border-border bg-surface px-2 py-1 text-[13px] text-text placeholder:text-textMuted"
+            />
+            <div className="flex max-h-40 flex-col gap-1.5 overflow-y-auto pl-0.5">
+              {visibleTraits.map((t) => (
+                <div
+                  key={t}
+                  {...clickableProps(() => onToggleTrait(t))}
+                  aria-pressed={activeTraits.includes(t)}
+                  className="flex cursor-pointer items-center gap-2 text-[13px]"
+                >
+                  <div
+                    className="flex h-[13px] w-[13px] flex-shrink-0 items-center justify-center rounded-sm border border-border"
+                    style={{
+                      background: activeTraits.includes(t) ? "oklch(0.5 0.14 255)" : "oklch(0.96 0.004 250)",
+                    }}
+                  >
+                    {activeTraits.includes(t) && (
+                      <span aria-hidden="true" className="text-[9px] leading-none text-bg">✓</span>
+                    )}
+                  </div>
+                  {t}
+                </div>
+              ))}
+              {visibleTraits.length === 0 && (
+                <div className="text-[12px] text-textMuted">No traits match "{traitFilter}"</div>
+              )}
+            </div>
+          </>
         )}
       </div>
 

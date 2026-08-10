@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { sql } from "drizzle-orm";
 import { db, pool } from "../src/db/client.js";
 import { cards, factions, packs, cycles, types } from "../src/db/schema.js";
-import { getCardByCode, searchCards } from "../src/services/cardSearch.js";
+import { getCardByCode, listTraits, searchCards } from "../src/services/cardSearch.js";
 
 async function seed() {
   await db.insert(cycles).values({ code: "core", name: "Core Set", position: 0 }).onConflictDoNothing();
@@ -32,7 +32,7 @@ async function seed() {
         cost: 4,
         text: "A noble lord of the North.",
         traitsRaw: "Lord. Stark.",
-        traits: ["Lord", "Stark"],
+        traits: ["Lord", "Stark", "QaMarkerLord"],
         deckLimit: 3,
         packCode: "Core",
         position: 1,
@@ -45,7 +45,7 @@ async function seed() {
         cost: 3,
         text: "The seat of House Stark.",
         traitsRaw: "Stronghold.",
-        traits: ["Stronghold"],
+        traits: ["Stronghold", "QaMarkerStronghold"],
         deckLimit: 2,
         packCode: "Core",
         position: 2,
@@ -86,10 +86,17 @@ describe("searchCards", () => {
   });
 
   it("filters by trait overlap", async () => {
-    const result = await searchCards({ traits: ["Stronghold"] });
+    const result = await searchCards({ traits: ["QaMarkerStronghold"] });
     const codes = result.items.map((c) => c.code);
     expect(codes).toContain("TEST02");
     expect(codes).not.toContain("TEST01");
+  });
+
+  it("filters by cards matching any of several traits", async () => {
+    const result = await searchCards({ traits: ["QaMarkerLord", "QaMarkerStronghold"] });
+    const codes = result.items.map((c) => c.code);
+    expect(codes).toContain("TEST01");
+    expect(codes).toContain("TEST02");
   });
 
   it("reports total distinct from the page size", async () => {
@@ -107,5 +114,16 @@ describe("getCardByCode", () => {
   it("returns the card for a known code", async () => {
     const card = await getCardByCode("TEST01");
     expect(card?.name).toBe("Eddard Stark");
+  });
+});
+
+describe("listTraits", () => {
+  it("returns distinct traits across all cards, sorted", async () => {
+    const traits = await listTraits();
+    expect(traits).toContain("Lord");
+    expect(traits).toContain("Stark");
+    expect(traits).toContain("Stronghold");
+    expect(traits).toEqual([...traits].sort());
+    expect(new Set(traits).size).toBe(traits.length);
   });
 });
