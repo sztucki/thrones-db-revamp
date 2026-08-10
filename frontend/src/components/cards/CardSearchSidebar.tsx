@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Faction } from "@thronesdb/shared";
+import type { CardTypeCode, Faction } from "@thronesdb/shared";
 import { clickableProps } from "../../lib/a11y.js";
 
 const FACTION_COLORS: Record<string, string> = {
@@ -14,7 +14,17 @@ const FACTION_COLORS: Record<string, string> = {
   neutral: "oklch(0.6 0.008 250)",
 };
 
-const STUB_GROUPS = ["Type", "Cost", "Traits", "Set / Icons"];
+const TYPE_OPTIONS: { code: CardTypeCode; label: string }[] = [
+  { code: "character", label: "Character" },
+  { code: "location", label: "Location" },
+  { code: "attachment", label: "Attachment" },
+  { code: "event", label: "Event" },
+  { code: "plot", label: "Plot" },
+  { code: "agenda", label: "Agenda" },
+  { code: "title", label: "Title" },
+];
+
+const STUB_GROUPS = ["Cost", "Traits", "Set / Icons"];
 
 export function CardSearchSidebar({
   query,
@@ -22,6 +32,8 @@ export function CardSearchSidebar({
   factions,
   activeFactions,
   onToggleFaction,
+  activeTypes,
+  onToggleType,
   onClearFilters,
 }: {
   query: string;
@@ -29,9 +41,12 @@ export function CardSearchSidebar({
   factions: Faction[];
   activeFactions: string[];
   onToggleFaction: (code: string) => void;
+  activeTypes: CardTypeCode[];
+  onToggleType: (code: CardTypeCode) => void;
   onClearFilters: () => void;
 }) {
   const [factionOpen, setFactionOpen] = useState(true);
+  const [typeOpen, setTypeOpen] = useState(true);
 
   return (
     <div className="w-[220px] flex-none">
@@ -74,6 +89,41 @@ export function CardSearchSidebar({
                   {f.name}
                 </div>
               ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mb-3 border-b border-border pb-3">
+        <div
+          {...clickableProps(() => setTypeOpen((v) => !v))}
+          aria-expanded={typeOpen}
+          className="mb-2 flex cursor-pointer justify-between text-[13px] font-semibold"
+        >
+          <span>Type</span>
+          <span>{typeOpen ? "▾" : "▸"}</span>
+        </div>
+        {typeOpen && (
+          <div className="flex flex-col gap-1.5 pl-0.5">
+            {TYPE_OPTIONS.map((t) => (
+              <div
+                key={t.code}
+                {...clickableProps(() => onToggleType(t.code))}
+                aria-pressed={activeTypes.includes(t.code)}
+                className="flex cursor-pointer items-center gap-2 text-[13px]"
+              >
+                <div
+                  className="flex h-[13px] w-[13px] flex-shrink-0 items-center justify-center rounded-sm border border-border"
+                  style={{
+                    background: activeTypes.includes(t.code) ? "oklch(0.5 0.14 255)" : "oklch(0.96 0.004 250)",
+                  }}
+                >
+                  {activeTypes.includes(t.code) && (
+                    <span className="text-[9px] leading-none text-bg">✓</span>
+                  )}
+                </div>
+                {t.label}
+              </div>
+            ))}
           </div>
         )}
       </div>

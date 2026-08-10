@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import type { CardTypeCode } from "@thronesdb/shared";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
@@ -18,6 +19,10 @@ export function CardsSearchPage() {
     () => (searchParams.get("faction")?.split(",").filter(Boolean) ?? []),
     [searchParams]
   );
+  const activeTypes = useMemo(
+    () => (searchParams.get("type")?.split(",").filter(Boolean) as CardTypeCode[]) ?? [],
+    [searchParams]
+  );
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
@@ -25,11 +30,12 @@ export function CardsSearchPage() {
   const searchQuery = useCardSearch({
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
+    type: activeTypes.length ? activeTypes : undefined,
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
   });
 
-  function updateParams(next: { q?: string; faction?: string[]; page?: number }) {
+  function updateParams(next: { q?: string; faction?: string[]; type?: CardTypeCode[]; page?: number }) {
     const params = new URLSearchParams(searchParams);
     if (next.q !== undefined) {
       if (next.q) params.set("q", next.q);
@@ -39,12 +45,16 @@ export function CardsSearchPage() {
       if (next.faction.length) params.set("faction", next.faction.join(","));
       else params.delete("faction");
     }
+    if (next.type !== undefined) {
+      if (next.type.length) params.set("type", next.type.join(","));
+      else params.delete("type");
+    }
     if (next.page !== undefined) {
       if (next.page > 1) params.set("page", String(next.page));
       else params.delete("page");
     }
     // Any change to filters or search text invalidates the current page.
-    if (next.q !== undefined || next.faction !== undefined) {
+    if (next.q !== undefined || next.faction !== undefined || next.type !== undefined) {
       params.delete("page");
     }
     setSearchParams(params, { replace: true });
@@ -53,6 +63,11 @@ export function CardsSearchPage() {
   function toggleFaction(code: string) {
     const has = activeFactions.includes(code);
     updateParams({ faction: has ? activeFactions.filter((f) => f !== code) : [...activeFactions, code] });
+  }
+
+  function toggleType(code: CardTypeCode) {
+    const has = activeTypes.includes(code);
+    updateParams({ type: has ? activeTypes.filter((t) => t !== code) : [...activeTypes, code] });
   }
 
   function clearFilters() {
@@ -86,6 +101,8 @@ export function CardsSearchPage() {
         factions={factionsQuery.data?.items ?? []}
         activeFactions={activeFactions}
         onToggleFaction={toggleFaction}
+        activeTypes={activeTypes}
+        onToggleType={toggleType}
         onClearFilters={clearFilters}
       />
 
