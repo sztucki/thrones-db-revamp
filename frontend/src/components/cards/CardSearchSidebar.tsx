@@ -1,10 +1,13 @@
 import { useState } from "react";
 import type { CardTypeCode, Faction } from "@thronesdb/shared";
 import { clickableProps } from "../../lib/a11y.js";
+import { TYPE_OPTIONS } from "../../lib/cardTypes.js";
+import { VARIANTS_CYCLE_CODE } from "../../lib/packFilters.js";
 
 export interface PackOption {
   code: string;
   name: string;
+  cycleCode: string;
   cycleName: string;
   cyclePosition: number;
   position: number;
@@ -30,16 +33,6 @@ const FACTION_COLORS: Record<string, string> = {
   neutral: "oklch(0.6 0.008 250)",
 };
 
-const TYPE_OPTIONS: { code: CardTypeCode; label: string }[] = [
-  { code: "character", label: "Character" },
-  { code: "location", label: "Location" },
-  { code: "attachment", label: "Attachment" },
-  { code: "event", label: "Event" },
-  { code: "plot", label: "Plot" },
-  { code: "agenda", label: "Agenda" },
-  { code: "title", label: "Title" },
-];
-
 export function CardSearchSidebar({
   query,
   onQueryChange,
@@ -57,6 +50,8 @@ export function CardSearchSidebar({
   packs,
   activePacks,
   onTogglePack,
+  activeVariantPacks,
+  onToggleVariantPack,
   activeIcons,
   onToggleIcon,
   onClearFilters,
@@ -77,6 +72,8 @@ export function CardSearchSidebar({
   packs: PackOption[];
   activePacks: string[];
   onTogglePack: (code: string) => void;
+  activeVariantPacks: string[];
+  onToggleVariantPack: (code: string) => void;
   activeIcons: string[];
   onToggleIcon: (key: string) => void;
   onClearFilters: () => void;
@@ -86,6 +83,7 @@ export function CardSearchSidebar({
   const [costOpen, setCostOpen] = useState(true);
   const [traitsOpen, setTraitsOpen] = useState(true);
   const [setOpen, setSetOpen] = useState(false);
+  const [variantsOpen, setVariantsOpen] = useState(false);
   const [iconsOpen, setIconsOpen] = useState(false);
   const [traitFilter, setTraitFilter] = useState("");
   const [packFilter, setPackFilter] = useState("");
@@ -94,7 +92,10 @@ export function CardSearchSidebar({
     (t) => activeTraits.includes(t) || t.toLowerCase().includes(traitFilter.toLowerCase())
   );
 
-  const visiblePacks = packs.filter(
+  const setPacks = packs.filter((p) => p.cycleCode !== VARIANTS_CYCLE_CODE);
+  const variantPacks = packs.filter((p) => p.cycleCode === VARIANTS_CYCLE_CODE);
+
+  const visiblePacks = setPacks.filter(
     (p) => activePacks.includes(p.code) || p.name.toLowerCase().includes(packFilter.toLowerCase())
   );
   const packsByCycle = new Map<string, PackOption[]>();
@@ -131,26 +132,24 @@ export function CardSearchSidebar({
         </div>
         {factionOpen && (
           <div className="flex flex-col gap-1.5 pl-0.5">
-            {factions
-              .filter((f) => f.code !== "neutral")
-              .map((f) => (
+            {factions.map((f) => (
+              <div
+                key={f.code}
+                {...clickableProps(() => onToggleFaction(f.code))}
+                aria-pressed={activeFactions.includes(f.code)}
+                className="flex cursor-pointer items-center gap-2 text-[13px]"
+              >
                 <div
-                  key={f.code}
-                  {...clickableProps(() => onToggleFaction(f.code))}
-                  aria-pressed={activeFactions.includes(f.code)}
-                  className="flex cursor-pointer items-center gap-2 text-[13px]"
-                >
-                  <div
-                    className="h-[13px] w-[13px] flex-shrink-0 rounded-sm border border-border"
-                    style={{
-                      background: activeFactions.includes(f.code)
-                        ? FACTION_COLORS[f.code]
-                        : "oklch(0.96 0.004 250)",
-                    }}
-                  />
-                  {f.name}
-                </div>
-              ))}
+                  className="h-[13px] w-[13px] flex-shrink-0 rounded-sm border border-border"
+                  style={{
+                    background: activeFactions.includes(f.code)
+                      ? FACTION_COLORS[f.code]
+                      : "oklch(0.96 0.004 250)",
+                  }}
+                />
+                {f.name}
+              </div>
+            ))}
           </div>
         )}
       </div>
@@ -324,6 +323,41 @@ export function CardSearchSidebar({
               )}
             </div>
           </>
+        )}
+      </div>
+
+      <div className="mb-3 border-b border-border pb-3">
+        <div
+          {...clickableProps(() => setVariantsOpen((v) => !v))}
+          aria-expanded={variantsOpen}
+          className="mb-2 flex cursor-pointer justify-between text-[13px] font-semibold"
+        >
+          <span>Game Variants{activeVariantPacks.length > 0 ? ` (${activeVariantPacks.length})` : ""}</span>
+          <span>{variantsOpen ? "▾" : "▸"}</span>
+        </div>
+        {variantsOpen && (
+          <div className="flex flex-col gap-1.5 pl-0.5">
+            {variantPacks.map((p) => (
+              <div
+                key={p.code}
+                {...clickableProps(() => onToggleVariantPack(p.code))}
+                aria-pressed={activeVariantPacks.includes(p.code)}
+                className="flex cursor-pointer items-center gap-2 text-[13px]"
+              >
+                <div
+                  className="flex h-[13px] w-[13px] flex-shrink-0 items-center justify-center rounded-sm border border-border"
+                  style={{
+                    background: activeVariantPacks.includes(p.code) ? "oklch(0.5 0.14 255)" : "oklch(0.96 0.004 250)",
+                  }}
+                >
+                  {activeVariantPacks.includes(p.code) && (
+                    <span aria-hidden="true" className="text-[9px] leading-none text-bg">✓</span>
+                  )}
+                </div>
+                {p.name}
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

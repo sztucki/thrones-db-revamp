@@ -1,6 +1,12 @@
 import type { Card } from "@thronesdb/shared";
 import { clickableProps } from "../../lib/a11y.js";
 
+export interface DeckControls {
+  count: number;
+  limit: number;
+  onSetCount: (count: number) => void;
+}
+
 export function CardTile({
   card,
   selected,
@@ -10,8 +16,10 @@ export function CardTile({
   card: Card;
   selected: boolean;
   onClick: () => void;
-  deckControls?: { count: number; limit: number; onSetCount: (count: number) => void };
+  deckControls?: DeckControls;
 }) {
+  const isPlot = card.typeCode === "plot";
+
   return (
     <div
       {...clickableProps(onClick)}
@@ -23,11 +31,19 @@ export function CardTile({
         <img
           src={card.imageUrl}
           alt={card.name}
-          className="aspect-[15/14] w-full object-cover object-top"
+          className={
+            isPlot
+              ? "aspect-[3/2] w-full bg-bg object-contain"
+              : "aspect-[15/14] w-full object-cover object-top"
+          }
           loading="lazy"
         />
       ) : (
-        <div className="aspect-[15/14] bg-[repeating-linear-gradient(45deg,oklch(0.92_0.006_250),oklch(0.92_0.006_250)_8px,oklch(0.96_0.004_250)_8px,oklch(0.96_0.004_250)_16px)]" />
+        <div
+          className={`bg-[repeating-linear-gradient(45deg,oklch(0.92_0.006_250),oklch(0.92_0.006_250)_8px,oklch(0.96_0.004_250)_8px,oklch(0.96_0.004_250)_16px)] ${
+            isPlot ? "aspect-[3/2]" : "aspect-[15/14]"
+          }`}
+        />
       )}
       <div className="rounded-b bg-bg p-2.5">
         <div className="mb-0.5 text-[13px] font-semibold">{card.name}</div>

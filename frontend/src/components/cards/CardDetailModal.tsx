@@ -28,6 +28,7 @@ export function CardDetailModal({ card, onClose }: { card: Card; onClose: () => 
 
   const icons = ICON_LABELS.filter(({ key }) => card[key]);
   const stats = STAT_LABELS.filter(({ key }) => card[key] !== null && card[key] !== undefined);
+  const isPlot = card.typeCode === "plot";
 
   return (
     <div
@@ -45,10 +46,18 @@ export function CardDetailModal({ card, onClose }: { card: Card; onClose: () => 
           <img
             src={card.imageUrl}
             alt={card.name}
-            className="w-[200px] shrink-0 rounded object-cover object-top"
+            className={
+              isPlot
+                ? "w-[280px] shrink-0 rounded bg-bg object-contain"
+                : "w-[200px] shrink-0 rounded object-cover object-top"
+            }
           />
         ) : (
-          <div className="aspect-[15/14] w-[200px] shrink-0 rounded bg-[repeating-linear-gradient(45deg,oklch(0.92_0.006_250),oklch(0.92_0.006_250)_8px,oklch(0.96_0.004_250)_8px,oklch(0.96_0.004_250)_16px)]" />
+          <div
+            className={`shrink-0 rounded bg-[repeating-linear-gradient(45deg,oklch(0.92_0.006_250),oklch(0.92_0.006_250)_8px,oklch(0.96_0.004_250)_8px,oklch(0.96_0.004_250)_16px)] ${
+              isPlot ? "aspect-[3/2] w-[280px]" : "aspect-[15/14] w-[200px]"
+            }`}
+          />
         )}
 
         <div className="min-w-0 flex-1">

@@ -8,16 +8,19 @@ import { useFactions } from "../../hooks/useFactions.js";
 import { useTraits } from "../../hooks/useTraits.js";
 import { usePacks } from "../../hooks/usePacks.js";
 import { useDeleteDeck, useSetDeckCard, useUpdateDeck } from "../../hooks/useDecks.js";
-import { CardTile } from "../cards/CardTile.js";
+import { CardGrid } from "../cards/CardGrid.js";
 import { CardSearchSidebar } from "../cards/CardSearchSidebar.js";
 import { CardDetailModal } from "../cards/CardDetailModal.js";
 import { Pagination } from "../cards/Pagination.js";
+import { splitTypeFilter } from "../../lib/cardTypes.js";
+import { resolvePackCodeFilter } from "../../lib/packFilters.js";
 import { DeckList } from "./DeckList.js";
 import { LegalityBox } from "./LegalityBox.js";
 import { CostCurveChart } from "./CostCurveChart.js";
 import { DeckWarnings } from "./DeckWarnings.js";
 
 const PAGE_SIZE = 40;
+const PLOT_PAGE_SIZE = 8;
 
 export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse; houseName: string }) {
   const navigate = useNavigate();
@@ -29,21 +32,26 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   const [activeTypes, setActiveTypes] = useState<CardTypeCode[]>([]);
   const [activeTraits, setActiveTraits] = useState<string[]>([]);
   const [activePacks, setActivePacks] = useState<string[]>([]);
+  const [activeVariantPacks, setActiveVariantPacks] = useState<string[]>([]);
   const [activeIcons, setActiveIcons] = useState<string[]>([]);
   const [costMin, setCostMin] = useState<number | undefined>(undefined);
   const [costMax, setCostMax] = useState<number | undefined>(undefined);
   const [page, setPage] = useState(1);
+  const [plotPage, setPlotPage] = useState(1);
 
   const factionsQuery = useFactions();
   const traitsQuery = useTraits();
   const packsQuery = usePacks();
 
-  const searchQuery = useCardSearch({
+  const { mainTypes, showPlots } = splitTypeFilter(activeTypes);
+  const packsLoaded = packsQuery.data !== undefined;
+  const packCode = resolvePackCodeFilter(packsQuery.data?.items ?? [], activePacks, activeVariantPacks);
+
+  const sharedFilters = {
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
-    type: activeTypes.length ? activeTypes : undefined,
     traits: activeTraits.length ? activeTraits : undefined,
-    packCode: activePacks.length ? activePacks : undefined,
+    packCode,
     unique: activeIcons.includes("unique") || undefined,
     loyal: activeIcons.includes("loyal") || undefined,
     military: activeIcons.includes("military") || undefined,
@@ -51,9 +59,27 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
     power: activeIcons.includes("power") || undefined,
     costMin,
     costMax,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  });
+  };
+
+  const searchQuery = useCardSearch(
+    {
+      ...sharedFilters,
+      type: mainTypes,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+    },
+    { enabled: mainTypes.length > 0 && packsLoaded }
+  );
+
+  const plotQuery = useCardSearch(
+    {
+      ...sharedFilters,
+      type: ["plot"],
+      limit: PLOT_PAGE_SIZE,
+      offset: (plotPage - 1) * PLOT_PAGE_SIZE,
+    },
+    { enabled: showPlots && packsLoaded }
+  );
 
   const setCard = useSetDeckCard(deck.id);
   const updateDeck = useUpdateDeck(deck.id);
@@ -79,32 +105,44 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   function toggleFaction(code: string) {
     setActiveFactions((prev) => (prev.includes(code) ? prev.filter((f) => f !== code) : [...prev, code]));
     setPage(1);
+    setPlotPage(1);
   }
 
   function toggleType(code: CardTypeCode) {
     setActiveTypes((prev) => (prev.includes(code) ? prev.filter((t) => t !== code) : [...prev, code]));
     setPage(1);
+    setPlotPage(1);
   }
 
   function toggleTrait(trait: string) {
     setActiveTraits((prev) => (prev.includes(trait) ? prev.filter((t) => t !== trait) : [...prev, trait]));
     setPage(1);
+    setPlotPage(1);
   }
 
   function togglePack(code: string) {
     setActivePacks((prev) => (prev.includes(code) ? prev.filter((p) => p !== code) : [...prev, code]));
     setPage(1);
+    setPlotPage(1);
+  }
+
+  function toggleVariantPack(code: string) {
+    setActiveVariantPacks((prev) => (prev.includes(code) ? prev.filter((p) => p !== code) : [...prev, code]));
+    setPage(1);
+    setPlotPage(1);
   }
 
   function toggleIcon(key: string) {
     setActiveIcons((prev) => (prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key]));
     setPage(1);
+    setPlotPage(1);
   }
 
   function handleCostChange(next: { costMin?: number; costMax?: number }) {
     if ("costMin" in next) setCostMin(next.costMin);
     if ("costMax" in next) setCostMax(next.costMax);
     setPage(1);
+    setPlotPage(1);
   }
 
   function clearFilters() {
@@ -112,15 +150,18 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
     setActiveTypes([]);
     setActiveTraits([]);
     setActivePacks([]);
+    setActiveVariantPacks([]);
     setActiveIcons([]);
     setCostMin(undefined);
     setCostMax(undefined);
     setPage(1);
+    setPlotPage(1);
   }
 
   function handleQueryChange(value: string) {
     setQuery(value);
     setPage(1);
+    setPlotPage(1);
   }
 
   function setCardCount(cardCode: string, count: number) {
@@ -150,6 +191,11 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   const results = (searchQuery.data?.items ?? []).filter((c) => c.typeCode !== "agenda");
   const total = searchQuery.data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  const plotItems = plotQuery.data?.items ?? [];
+  const plotTotal = plotQuery.data?.total ?? 0;
+  const plotTotalPages = Math.max(1, Math.ceil(plotTotal / PLOT_PAGE_SIZE));
+
   const saving = setCard.isPending || updateDeck.isPending;
 
   return (
@@ -171,6 +217,8 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
         packs={packsQuery.data?.items ?? []}
         activePacks={activePacks}
         onTogglePack={togglePack}
+        activeVariantPacks={activeVariantPacks}
+        onToggleVariantPack={toggleVariantPack}
         activeIcons={activeIcons}
         onToggleIcon={toggleIcon}
         onClearFilters={clearFilters}
@@ -208,22 +256,38 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-3">
-          {results.map((card) => (
-            <CardTile
-              key={card.code}
-              card={card}
-              selected={(countByCode.get(card.code) ?? 0) > 0}
-              onClick={() => setDetailCard(card)}
-              deckControls={{
+        {showPlots && plotItems.length > 0 && (
+          <div className="mb-5">
+            <div className="mb-2 text-xs font-semibold text-textMuted">
+              Plots {plotQuery.isLoading ? "" : `(${plotTotal})`}
+            </div>
+            <CardGrid
+              cards={plotItems}
+              onOpenDetail={setDetailCard}
+              columns={2}
+              selected={(card) => (countByCode.get(card.code) ?? 0) > 0}
+              getDeckControls={(card) => ({
                 count: countByCode.get(card.code) ?? 0,
                 limit: card.deckLimit,
                 onSetCount: (n) => setCardCount(card.code, n),
-              }}
+              })}
             />
-          ))}
-        </div>
-        {!searchQuery.isError && results.length === 0 && !searchQuery.isLoading && (
+            <Pagination page={plotPage} totalPages={plotTotalPages} onPageChange={setPlotPage} />
+          </div>
+        )}
+
+        <CardGrid
+          cards={results}
+          onOpenDetail={setDetailCard}
+          columns={3}
+          selected={(card) => (countByCode.get(card.code) ?? 0) > 0}
+          getDeckControls={(card) => ({
+            count: countByCode.get(card.code) ?? 0,
+            limit: card.deckLimit,
+            onSetCount: (n) => setCardCount(card.code, n),
+          })}
+        />
+        {!searchQuery.isError && results.length === 0 && plotItems.length === 0 && !searchQuery.isLoading && (
           <div className="py-10 text-center text-sm text-textMuted">No cards match these filters.</div>
         )}
 

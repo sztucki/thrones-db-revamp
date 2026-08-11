@@ -11,8 +11,11 @@ import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
 import { CardDetailModal } from "../components/cards/CardDetailModal.js";
 import { Pagination } from "../components/cards/Pagination.js";
+import { splitTypeFilter } from "../lib/cardTypes.js";
+import { resolvePackCodeFilter } from "../lib/packFilters.js";
 
 const PAGE_SIZE = 40;
+const PLOT_PAGE_SIZE = 12;
 const ICON_KEYS = ["unique", "loyal", "military", "intrigue", "power"] as const;
 
 export function CardsSearchPage() {
@@ -36,6 +39,10 @@ export function CardsSearchPage() {
     () => (searchParams.get("packs")?.split(",").filter(Boolean) ?? []),
     [searchParams]
   );
+  const activeVariantPacks = useMemo(
+    () => (searchParams.get("variants")?.split(",").filter(Boolean) ?? []),
+    [searchParams]
+  );
   const activeIcons = useMemo(
     () => ICON_KEYS.filter((k) => searchParams.get(k) === "1"),
     [searchParams]
@@ -44,28 +51,52 @@ export function CardsSearchPage() {
   const costMax = searchParams.has("costMax") ? Number(searchParams.get("costMax")) : undefined;
   const sortDir = searchParams.get("dir") === "desc" ? "desc" : "asc";
   const page = Math.max(1, Number(searchParams.get("page")) || 1);
+  const plotPage = Math.max(1, Number(searchParams.get("plotPage")) || 1);
   const debouncedQuery = useDebouncedValue(query, 200);
 
   const factionsQuery = useFactions();
   const traitsQuery = useTraits();
   const packsQuery = usePacks();
-  const searchQuery = useCardSearch({
+
+  const { mainTypes, showPlots } = splitTypeFilter(activeTypes);
+  const packsLoaded = packsQuery.data !== undefined;
+  const packCode = resolvePackCodeFilter(packsQuery.data?.items ?? [], activePacks, activeVariantPacks);
+
+  const sharedFilters = {
     q: debouncedQuery || undefined,
     faction: activeFactions.length ? activeFactions : undefined,
-    type: activeTypes.length ? activeTypes : undefined,
     traits: activeTraits.length ? activeTraits : undefined,
-    packCode: activePacks.length ? activePacks : undefined,
+    packCode,
     unique: activeIcons.includes("unique") || undefined,
     loyal: activeIcons.includes("loyal") || undefined,
     military: activeIcons.includes("military") || undefined,
     intrigue: activeIcons.includes("intrigue") || undefined,
     power: activeIcons.includes("power") || undefined,
-    sortDir,
     costMin,
     costMax,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  });
+  };
+
+  const searchQuery = useCardSearch(
+    {
+      ...sharedFilters,
+      type: mainTypes,
+      sortDir,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+    },
+    { enabled: mainTypes.length > 0 && packsLoaded }
+  );
+
+  const plotQuery = useCardSearch(
+    {
+      ...sharedFilters,
+      type: ["plot"],
+      sortDir,
+      limit: PLOT_PAGE_SIZE,
+      offset: (plotPage - 1) * PLOT_PAGE_SIZE,
+    },
+    { enabled: showPlots && packsLoaded }
+  );
 
   function updateParams(next: {
     q?: string;
@@ -73,11 +104,13 @@ export function CardsSearchPage() {
     type?: CardTypeCode[];
     traits?: string[];
     packs?: string[];
+    variants?: string[];
     icons?: string[];
     costMin?: number;
     costMax?: number;
     sortDir?: "asc" | "desc";
     page?: number;
+    plotPage?: number;
   }) {
     const params = new URLSearchParams(searchParams);
     if (next.q !== undefined) {
@@ -99,6 +132,10 @@ export function CardsSearchPage() {
     if (next.packs !== undefined) {
       if (next.packs.length) params.set("packs", next.packs.join(","));
       else params.delete("packs");
+    }
+    if (next.variants !== undefined) {
+      if (next.variants.length) params.set("variants", next.variants.join(","));
+      else params.delete("variants");
     }
     if (next.icons !== undefined) {
       for (const key of ICON_KEYS) {
@@ -122,19 +159,25 @@ export function CardsSearchPage() {
       if (next.page > 1) params.set("page", String(next.page));
       else params.delete("page");
     }
-    // Any change to filters or search text invalidates the current page.
+    if (next.plotPage !== undefined) {
+      if (next.plotPage > 1) params.set("plotPage", String(next.plotPage));
+      else params.delete("plotPage");
+    }
+    // Any change to filters or search text invalidates the current page(s).
     if (
       next.q !== undefined ||
       next.faction !== undefined ||
       next.type !== undefined ||
       next.traits !== undefined ||
       next.packs !== undefined ||
+      next.variants !== undefined ||
       next.icons !== undefined ||
       next.sortDir !== undefined ||
       "costMin" in next ||
       "costMax" in next
     ) {
       params.delete("page");
+      params.delete("plotPage");
     }
     setSearchParams(params, { replace: true });
   }
@@ -163,6 +206,13 @@ export function CardsSearchPage() {
     updateParams({ packs: has ? activePacks.filter((p) => p !== code) : [...activePacks, code] });
   }
 
+  function toggleVariantPack(code: string) {
+    const has = activeVariantPacks.includes(code);
+    updateParams({
+      variants: has ? activeVariantPacks.filter((p) => p !== code) : [...activeVariantPacks, code],
+    });
+  }
+
   function toggleIcon(key: string) {
     const has = activeIcons.includes(key as (typeof ICON_KEYS)[number]);
     updateParams({ icons: has ? activeIcons.filter((i) => i !== key) : [...activeIcons, key] });
@@ -179,12 +229,23 @@ export function CardsSearchPage() {
   const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
   const rangeEnd = Math.min(total, page * PAGE_SIZE);
 
+  const plotItems = plotQuery.data?.items ?? [];
+  const plotTotal = plotQuery.data?.total ?? 0;
+  const plotTotalPages = Math.max(1, Math.ceil(plotTotal / PLOT_PAGE_SIZE));
+
   useEffect(() => {
     if (!searchQuery.isLoading && page > totalPages) {
       updateParams({ page: totalPages });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery.isLoading, page, totalPages]);
+
+  useEffect(() => {
+    if (!plotQuery.isLoading && plotPage > plotTotalPages) {
+      updateParams({ plotPage: plotTotalPages });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [plotQuery.isLoading, plotPage, plotTotalPages]);
 
   return (
     <div className="mx-auto flex max-w-6xl gap-6 px-7 py-6">
@@ -205,6 +266,8 @@ export function CardsSearchPage() {
         packs={packsQuery.data?.items ?? []}
         activePacks={activePacks}
         onTogglePack={togglePack}
+        activeVariantPacks={activeVariantPacks}
+        onToggleVariantPack={toggleVariantPack}
         activeIcons={activeIcons}
         onToggleIcon={toggleIcon}
         onClearFilters={clearFilters}
@@ -234,8 +297,24 @@ export function CardsSearchPage() {
           </div>
         )}
 
-        {!searchQuery.isError && items.length === 0 && !searchQuery.isLoading && (
+        {!searchQuery.isError && items.length === 0 && plotItems.length === 0 && !searchQuery.isLoading && (
           <div className="py-10 text-center text-sm text-textMuted">No cards match these filters.</div>
+        )}
+
+        {showPlots && plotItems.length > 0 && (
+          <div className="mb-6">
+            <div className="mb-2 flex items-center justify-between">
+              <div className="text-xs font-semibold text-textMuted">
+                Plots {plotQuery.isLoading ? "" : `(${plotTotal})`}
+              </div>
+            </div>
+            <CardGrid cards={plotItems} onOpenDetail={setDetailCard} columns={2} />
+            <Pagination
+              page={plotPage}
+              totalPages={plotTotalPages}
+              onPageChange={(p) => updateParams({ plotPage: p })}
+            />
+          </div>
         )}
 
         <CardGrid cards={items} onOpenDetail={setDetailCard} />
