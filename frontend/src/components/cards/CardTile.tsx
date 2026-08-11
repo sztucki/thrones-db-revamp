@@ -5,10 +5,12 @@ export function CardTile({
   card,
   selected,
   onClick,
+  deckControls,
 }: {
   card: Card;
   selected: boolean;
   onClick: () => void;
+  deckControls?: { count: number; limit: number; onSetCount: (count: number) => void };
 }) {
   return (
     <div
@@ -32,6 +34,29 @@ export function CardTile({
         <div className="text-[11px] text-textMuted capitalize">
           {card.typeCode} · cost {card.cost ?? card.costRaw ?? "–"} · {card.factionCode}
         </div>
+        {deckControls && (
+          <div
+            className="mt-1.5 flex gap-1"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(e) => e.stopPropagation()}
+          >
+            {Array.from({ length: Math.min(3, deckControls.limit) }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => deckControls.onSetCount(n)}
+                aria-pressed={deckControls.count === n}
+                className={`flex-1 rounded-sm border py-0.5 text-[11px] font-semibold ${
+                  deckControls.count === n
+                    ? "border-accent bg-accent text-bg"
+                    : "border-border text-textMuted"
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

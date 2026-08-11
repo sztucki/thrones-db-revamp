@@ -34,7 +34,8 @@ test("cards search, and the full house -> agenda -> build deck flow, persist acr
   await expect(page.getByText(/Too few draw cards/)).toBeVisible();
   await expect(page.getByText("No cards added yet")).toBeVisible();
 
-  await page.locator("[role=button]").filter({ hasText: "cost" }).first().click();
+  const firstTile = page.locator("[role=button]").filter({ hasText: /· cost/ }).first();
+  await firstTile.getByRole("button", { name: "1", exact: true }).click();
   await expect(page.getByText("x1")).toBeVisible();
   await expect(page.getByText("No cards added yet")).not.toBeVisible();
 

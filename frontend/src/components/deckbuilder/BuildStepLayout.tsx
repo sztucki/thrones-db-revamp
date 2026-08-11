@@ -1,25 +1,58 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Card, DeckDetailResponse } from "@thronesdb/shared";
+import type { Card, CardTypeCode, DeckDetailResponse } from "@thronesdb/shared";
 import { useCardSearch } from "../../hooks/useCardSearch.js";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue.js";
 import { useCardsByCode } from "../../hooks/useCardsByCode.js";
+import { useFactions } from "../../hooks/useFactions.js";
+import { useTraits } from "../../hooks/useTraits.js";
+import { usePacks } from "../../hooks/usePacks.js";
 import { useDeleteDeck, useSetDeckCard, useUpdateDeck } from "../../hooks/useDecks.js";
 import { CardTile } from "../cards/CardTile.js";
+import { CardSearchSidebar } from "../cards/CardSearchSidebar.js";
+import { CardDetailModal } from "../cards/CardDetailModal.js";
+import { Pagination } from "../cards/Pagination.js";
 import { DeckList } from "./DeckList.js";
 import { LegalityBox } from "./LegalityBox.js";
 import { CostCurveChart } from "./CostCurveChart.js";
 import { DeckWarnings } from "./DeckWarnings.js";
 
+const PAGE_SIZE = 40;
+
 export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse; houseName: string }) {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebouncedValue(query, 200);
+  const [detailCard, setDetailCard] = useState<Card | null>(null);
+
+  const [activeFactions, setActiveFactions] = useState<string[]>([deck.factionCode, "neutral"]);
+  const [activeTypes, setActiveTypes] = useState<CardTypeCode[]>([]);
+  const [activeTraits, setActiveTraits] = useState<string[]>([]);
+  const [activePacks, setActivePacks] = useState<string[]>([]);
+  const [activeIcons, setActiveIcons] = useState<string[]>([]);
+  const [costMin, setCostMin] = useState<number | undefined>(undefined);
+  const [costMax, setCostMax] = useState<number | undefined>(undefined);
+  const [page, setPage] = useState(1);
+
+  const factionsQuery = useFactions();
+  const traitsQuery = useTraits();
+  const packsQuery = usePacks();
 
   const searchQuery = useCardSearch({
     q: debouncedQuery || undefined,
-    faction: [deck.factionCode, "neutral"],
-    limit: 60,
+    faction: activeFactions.length ? activeFactions : undefined,
+    type: activeTypes.length ? activeTypes : undefined,
+    traits: activeTraits.length ? activeTraits : undefined,
+    packCode: activePacks.length ? activePacks : undefined,
+    unique: activeIcons.includes("unique") || undefined,
+    loyal: activeIcons.includes("loyal") || undefined,
+    military: activeIcons.includes("military") || undefined,
+    intrigue: activeIcons.includes("intrigue") || undefined,
+    power: activeIcons.includes("power") || undefined,
+    costMin,
+    costMax,
+    limit: PAGE_SIZE,
+    offset: (page - 1) * PAGE_SIZE,
   });
 
   const setCard = useSetDeckCard(deck.id);
@@ -36,10 +69,55 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
     return m;
   }, [deck.cards]);
 
-  function addOne(card: Card) {
-    const current = countByCode.get(card.code) ?? 0;
-    if (current >= card.deckLimit || current >= 10) return;
-    setCard.mutate({ cardCode: card.code, count: current + 1 });
+  function toggleFaction(code: string) {
+    setActiveFactions((prev) => (prev.includes(code) ? prev.filter((f) => f !== code) : [...prev, code]));
+    setPage(1);
+  }
+
+  function toggleType(code: CardTypeCode) {
+    setActiveTypes((prev) => (prev.includes(code) ? prev.filter((t) => t !== code) : [...prev, code]));
+    setPage(1);
+  }
+
+  function toggleTrait(trait: string) {
+    setActiveTraits((prev) => (prev.includes(trait) ? prev.filter((t) => t !== trait) : [...prev, trait]));
+    setPage(1);
+  }
+
+  function togglePack(code: string) {
+    setActivePacks((prev) => (prev.includes(code) ? prev.filter((p) => p !== code) : [...prev, code]));
+    setPage(1);
+  }
+
+  function toggleIcon(key: string) {
+    setActiveIcons((prev) => (prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key]));
+    setPage(1);
+  }
+
+  function handleCostChange(next: { costMin?: number; costMax?: number }) {
+    if ("costMin" in next) setCostMin(next.costMin);
+    if ("costMax" in next) setCostMax(next.costMax);
+    setPage(1);
+  }
+
+  function clearFilters() {
+    setActiveFactions([]);
+    setActiveTypes([]);
+    setActiveTraits([]);
+    setActivePacks([]);
+    setActiveIcons([]);
+    setCostMin(undefined);
+    setCostMax(undefined);
+    setPage(1);
+  }
+
+  function handleQueryChange(value: string) {
+    setQuery(value);
+    setPage(1);
+  }
+
+  function setCardCount(cardCode: string, count: number) {
+    setCard.mutate({ cardCode, count });
   }
 
   function removeOne(cardCode: string) {
@@ -63,10 +141,34 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   }
 
   const results = (searchQuery.data?.items ?? []).filter((c) => c.typeCode !== "agenda");
+  const total = searchQuery.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const saving = setCard.isPending || updateDeck.isPending;
 
   return (
-    <div className="mx-auto flex max-w-6xl gap-6 px-7 py-6">
+    <div className="mx-auto flex max-w-7xl gap-6 px-7 py-6">
+      <CardSearchSidebar
+        query={query}
+        onQueryChange={handleQueryChange}
+        factions={factionsQuery.data?.items ?? []}
+        activeFactions={activeFactions}
+        onToggleFaction={toggleFaction}
+        activeTypes={activeTypes}
+        onToggleType={toggleType}
+        costMin={costMin}
+        costMax={costMax}
+        onCostChange={handleCostChange}
+        traits={traitsQuery.data?.items ?? []}
+        activeTraits={activeTraits}
+        onToggleTrait={toggleTrait}
+        packs={packsQuery.data?.items ?? []}
+        activePacks={activePacks}
+        onTogglePack={togglePack}
+        activeIcons={activeIcons}
+        onToggleIcon={toggleIcon}
+        onClearFilters={clearFilters}
+      />
+
       <div className="flex-1">
         <div className="mb-3.5 flex items-center justify-between">
           <input
@@ -93,19 +195,6 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
           </div>
         </div>
 
-        <input
-          aria-label="Search card text"
-          placeholder="Search card text…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="mb-2.5 w-full rounded border border-border bg-surface px-3 py-2 text-[13px] text-text placeholder:text-textMuted"
-        />
-        <div className="mb-3.5 flex gap-1.5">
-          <div className="rounded-[10px] border border-border bg-surfaceHighlight px-2.5 py-0.5 text-xs text-accent">
-            Faction: {houseName}
-          </div>
-        </div>
-
         {searchQuery.isError && (
           <div className="rounded border border-danger/40 bg-danger/5 p-4 text-sm text-danger">
             Couldn't load cards. Is the backend running?
@@ -118,13 +207,20 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
               key={card.code}
               card={card}
               selected={(countByCode.get(card.code) ?? 0) > 0}
-              onClick={() => addOne(card)}
+              onClick={() => setDetailCard(card)}
+              deckControls={{
+                count: countByCode.get(card.code) ?? 0,
+                limit: card.deckLimit,
+                onSetCount: (n) => setCardCount(card.code, n),
+              }}
             />
           ))}
         </div>
         {!searchQuery.isError && results.length === 0 && !searchQuery.isLoading && (
           <div className="py-10 text-center text-sm text-textMuted">No cards match these filters.</div>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <div className="w-[270px] flex-none self-start rounded-lg border border-border bg-surface p-4">
@@ -143,6 +239,8 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
 
         <DeckWarnings legality={deck.legality} />
       </div>
+
+      {detailCard && <CardDetailModal card={detailCard} onClose={() => setDetailCard(null)} />}
     </div>
   );
 }
