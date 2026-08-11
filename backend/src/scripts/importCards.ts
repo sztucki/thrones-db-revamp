@@ -1,14 +1,24 @@
 // Imports AGoT 2e card/pack/cycle data from throneteki-json-data (the
 // maintained successor to the archived ThronesDB/thronesdb-json-data repo —
-// see the plan doc for why) and, per card, looks up image_url from
-// ThronesDB's public API since the data repo doesn't carry card art.
+// see the plan doc for why) and, per card, sources card art (a local image
+// directory first, falling back to ThronesDB's public API since the data
+// repo doesn't carry card art) and uploads it to Azure Blob Storage.
 //
-// Usage: tsx src/scripts/importCards.ts [--packs=Core,AtG] [--skip-images] [--concurrency=10]
+// --image-dir expects one subfolder per pack, named "<number>_<acronym>"
+// (e.g. "37_atg", matched case-insensitively against pack code "AtG"), each
+// containing files named after the card name with apostrophes replaced by
+// underscores (e.g. "Jaqen H_ghar.jpg" for "Jaqen H'ghar").
+//
+// Usage: tsx src/scripts/importCards.ts [--packs=Core,AtG] [--skip-images] [--concurrency=10] [--image-dir=/path/to/images]
+import { readdirSync } from "node:fs";
+import { readFile } from "node:fs/promises";
+import { extname, join } from "node:path";
 import { Ajv } from "ajv";
 import { sql } from "drizzle-orm";
 import { db, pool } from "../db/client.js";
 import { cards, cycles, factions, importRuns, packs, types } from "../db/schema.js";
 import { config } from "../config.js";
+import { uploadCardImage } from "../services/blobStorage.js";
 
 const REPO = config.CARD_DATA_REPO_URL;
 const THRONESDB_API = config.THRONESDB_PUBLIC_API_URL;
@@ -113,6 +123,65 @@ async function lookupImageUrl(code: string): Promise<string | null> {
   }
 }
 
+const KNOWN_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".webp"];
+const CONTENT_TYPE_BY_EXT: Record<string, string> = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+};
+
+// The supplied image directory is laid out as one subfolder per pack, named
+// "<number>_<acronym>" (e.g. "37_atg"), matched case-insensitively against
+// pack codes (e.g. "AtG"). Within each pack folder, files are named after
+// the card name with apostrophes replaced by underscores (e.g. "Jaqen
+// H_ghar.jpg" for "Jaqen H'ghar") — matching is scoped to a single pack
+// folder because the same card name can recur across multiple packs
+// (reprints), and a global name index would risk matching the wrong pack's
+// art to a card.
+function buildPackFolderIndex(dir: string): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const acronym = entry.name.match(/^\d+_(.+)$/)?.[1] ?? entry.name;
+    index.set(acronym.toLowerCase(), join(dir, entry.name));
+  }
+  return index;
+}
+
+function normalizeCardName(name: string): string {
+  return name.replaceAll("'", "_").trim().toLowerCase();
+}
+
+function buildLocalImageIndexForPack(packFolder: string): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const filename of readdirSync(packFolder)) {
+    const ext = extname(filename).toLowerCase();
+    if (!KNOWN_IMAGE_EXTENSIONS.includes(ext)) continue;
+    index.set(normalizeCardName(filename.slice(0, -ext.length)), join(packFolder, filename));
+  }
+  return index;
+}
+
+async function resolveAndUploadImage(code: string, localImagePath: string | undefined): Promise<string | null> {
+  try {
+    if (localImagePath) {
+      const bytes = await readFile(localImagePath);
+      const contentType = CONTENT_TYPE_BY_EXT[extname(localImagePath).toLowerCase()] ?? "image/png";
+      return await uploadCardImage(code, bytes, contentType);
+    }
+    const remoteUrl = await lookupImageUrl(code);
+    if (!remoteUrl) return null;
+    const res = await fetch(remoteUrl);
+    if (!res.ok) return null;
+    const bytes = Buffer.from(await res.arrayBuffer());
+    return await uploadCardImage(code, bytes, res.headers.get("content-type") ?? "image/png");
+  } catch (err) {
+    console.warn(`  ! image resolution failed for ${code}: ${(err as Error).message}`);
+    return null;
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const packsFilterArg = args.find((a) => a.startsWith("--packs="));
@@ -120,6 +189,9 @@ async function main() {
   const skipImages = args.includes("--skip-images");
   const concurrencyArg = args.find((a) => a.startsWith("--concurrency="));
   const concurrency = concurrencyArg ? Number(concurrencyArg.split("=")[1]) : 10;
+  const imageDirArg = args.find((a) => a.startsWith("--image-dir="));
+  const imageDir = imageDirArg ? imageDirArg.split("=")[1] : null;
+  const packFolderIndex = imageDir ? buildPackFolderIndex(imageDir) : null;
 
   const ajv = new Ajv({ strict: false, allErrors: true });
   const [cardSchema, packSchema] = await Promise.all([
@@ -216,9 +288,14 @@ async function main() {
     });
     skipped += raw.cards.length - validCards.length;
 
+    const packImageFolder = packFolderIndex?.get(raw.code.toLowerCase());
+    const localImageIndex = packImageFolder ? buildLocalImageIndexForPack(packImageFolder) : null;
+
     const imageUrls = skipImages
       ? validCards.map(() => null)
-      : await mapWithConcurrency(validCards, concurrency, (c) => lookupImageUrl(c.code));
+      : await mapWithConcurrency(validCards, concurrency, (c) =>
+          resolveAndUploadImage(c.code, localImageIndex?.get(normalizeCardName(c.name)))
+        );
 
     for (let i = 0; i < validCards.length; i++) {
       const c = validCards[i];
