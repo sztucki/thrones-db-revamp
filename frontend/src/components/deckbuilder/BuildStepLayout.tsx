@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Card, CardTypeCode, DeckDetailResponse } from "@thronesdb/shared";
+import { AGENDA_RULES, type Card, type CardTypeCode, type DeckDetailResponse } from "@thronesdb/shared";
 import { useCardSearch } from "../../hooks/useCardSearch.js";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue.js";
 import { useCardsByCode } from "../../hooks/useCardsByCode.js";
@@ -60,6 +60,13 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   const deleteDeckMutation = useDeleteDeck();
 
   const deckCardLookup = useCardsByCode(deck.cards.map((c) => c.cardCode));
+
+  const agendaLookup = useCardsByCode(deck.agendaCode ? [deck.agendaCode] : []);
+  const agendaCard = deck.agendaCode ? agendaLookup.get(deck.agendaCode) : undefined;
+  const bannerFactionCode = deck.agendaCode ? AGENDA_RULES[deck.agendaCode]?.bannerFaction : undefined;
+  const bannerFactionName = bannerFactionCode
+    ? (factionsQuery.data?.items.find((f) => f.code === bannerFactionCode)?.name ?? bannerFactionCode)
+    : undefined;
 
   const [name, setName] = useState(deck.name);
 
@@ -230,6 +237,13 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
           </div>
           <div className="text-textMuted">{houseName}</div>
         </div>
+
+        {agendaCard && (
+          <div className="mb-3.5 text-[13px] text-textMuted">
+            Agenda: {agendaCard.name}
+            {bannerFactionName ? ` · Banner: ${bannerFactionName}` : ""}
+          </div>
+        )}
 
         <LegalityBox legality={deck.legality} />
 

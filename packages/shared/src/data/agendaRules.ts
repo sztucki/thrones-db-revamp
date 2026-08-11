@@ -22,6 +22,7 @@ export interface AgendaRule {
   requiredPlots?: number;
   maxDoubledPlots?: number;
   rules?: AgendaRuleCondition[];
+  bannerFaction?: string;
 }
 
 function hasTrait(card: Card, trait: string) {
@@ -41,6 +42,7 @@ function rulesForBanner(faction: string, factionName: string): AgendaRule {
         condition: (draw) => countDraw(draw, (c) => c.factionCode === faction) >= 12,
       },
     ],
+    bannerFaction: faction,
   };
 }
 
