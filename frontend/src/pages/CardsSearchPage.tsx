@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { CardTypeCode } from "@thronesdb/shared";
+import type { Card, CardTypeCode } from "@thronesdb/shared";
 import { useCardSearch } from "../hooks/useCardSearch.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useTraits } from "../hooks/useTraits.js";
@@ -9,14 +9,14 @@ import { clickableProps } from "../lib/a11y.js";
 import { useDebouncedValue } from "../hooks/useDebouncedValue.js";
 import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
-import { CompareTray } from "../components/cards/CompareTray.js";
+import { CardDetailModal } from "../components/cards/CardDetailModal.js";
 
 const PAGE_SIZE = 40;
 const ICON_KEYS = ["unique", "loyal", "military", "intrigue", "power"] as const;
 
 export function CardsSearchPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [compare, setCompare] = useState<string[]>([]);
+  const [detailCard, setDetailCard] = useState<Card | null>(null);
 
   const query = searchParams.get("q") ?? "";
   const activeFactions = useMemo(
@@ -171,13 +171,8 @@ export function CardsSearchPage() {
     setSearchParams({}, { replace: true });
   }
 
-  function toggleCompare(code: string) {
-    setCompare((prev) => (prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]));
-  }
-
   const items = searchQuery.data?.items ?? [];
   const total = searchQuery.data?.total ?? 0;
-  const compareCards = items.filter((c) => compare.includes(c.code));
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const rangeStart = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -242,7 +237,7 @@ export function CardsSearchPage() {
           <div className="py-10 text-center text-sm text-textMuted">No cards match these filters.</div>
         )}
 
-        <CardGrid cards={items} compare={compare} onToggleCompare={toggleCompare} />
+        <CardGrid cards={items} onOpenDetail={setDetailCard} />
 
         {totalPages > 1 && (
           <div className="mt-5 flex items-center justify-center gap-3 text-[13px]">
@@ -271,9 +266,9 @@ export function CardsSearchPage() {
         <div className="mt-4 text-xs text-textMuted">
           Rulings for a card? Check the Reviews section.
         </div>
-
-        <CompareTray cards={compareCards} />
       </div>
+
+      {detailCard && <CardDetailModal card={detailCard} onClose={() => setDetailCard(null)} />}
     </div>
   );
 }

@@ -13,7 +13,6 @@ export function CardTile({
   return (
     <div
       {...clickableProps(onClick)}
-      aria-pressed={selected}
       className={`cursor-pointer overflow-hidden rounded ${
         selected ? "border-[1.5px] border-accent" : "border border-border"
       }`}
