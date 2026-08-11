@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { Card, CardTypeCode, DeckCardEntry, DeckDetailResponse, DeckFormat, DeckSummary } from "@thronesdb/shared";
-import { checkLegality } from "@thronesdb/shared";
+import { checkLegality, checkTournamentLegality } from "@thronesdb/shared";
 import { db } from "../db/client.js";
 import { cards, deckCards, decks } from "../db/schema.js";
 
@@ -90,6 +90,7 @@ export async function getDeckForUser(userId: string, deckId: string): Promise<De
     deckCardEntries,
     cardLookup
   );
+  const tournamentLegality = checkTournamentLegality(deck.factionCode, deck.agendaCode, deckCardEntries, cardLookup);
 
   return {
     id: deck.id,
@@ -102,6 +103,7 @@ export async function getDeckForUser(userId: string, deckId: string): Promise<De
     createdAt: deck.createdAt.toISOString(),
     updatedAt: deck.updatedAt.toISOString(),
     legality,
+    tournamentLegality,
   };
 }
 

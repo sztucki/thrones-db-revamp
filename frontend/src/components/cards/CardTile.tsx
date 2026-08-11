@@ -44,7 +44,8 @@ export function CardTile({
               <button
                 key={n}
                 type="button"
-                onClick={() => deckControls.onSetCount(n)}
+                title={deckControls.count === n ? "Click to remove from deck" : undefined}
+                onClick={() => deckControls.onSetCount(deckControls.count === n ? 0 : n)}
                 aria-pressed={deckControls.count === n}
                 className={`flex-1 rounded-sm border py-0.5 text-[11px] font-semibold ${
                   deckControls.count === n

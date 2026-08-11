@@ -125,4 +125,5 @@ export interface SessionResponse {
 
 export interface DeckDetailResponse extends Deck {
   legality: import("./legality.js").LegalityResult;
+  tournamentLegality: import("./legality.js").TournamentLegalityCell[];
 }

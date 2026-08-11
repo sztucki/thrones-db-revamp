@@ -245,7 +245,7 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
           </div>
         )}
 
-        <LegalityBox legality={deck.legality} />
+        <LegalityBox tournamentLegality={deck.tournamentLegality} />
 
         <DeckList entries={deck.cards} cardLookup={deckCardLookup} onRemoveOne={removeOne} />
 

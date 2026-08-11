@@ -1,23 +1,44 @@
-import type { LegalityResult } from "@thronesdb/shared";
+import type { DeckFormat, TournamentLegalityCell } from "@thronesdb/shared";
 
-const FORMAT_LABEL: Record<LegalityResult["format"], string> = {
+const FORMAT_LABEL: Record<DeckFormat, string> = {
   joust: "Joust",
   melee: "Melee",
 };
+const FORMATS: DeckFormat[] = ["joust", "melee"];
 
-export function LegalityBox({ legality }: { legality: LegalityResult }) {
+export function LegalityBox({ tournamentLegality }: { tournamentLegality: TournamentLegalityCell[] }) {
+  const listNames = [...new Set(tournamentLegality.map((c) => c.listName))];
+
   return (
     <div className="mb-4 rounded border border-border bg-bg p-3">
-      <div className="mb-2 text-xs font-semibold">Tournament Legality — {FORMAT_LABEL[legality.format]}</div>
-      <div className="mb-1.5 flex items-center gap-2 text-xs">
-        <span className={legality.legal ? "text-success" : "text-danger"}>{legality.legal ? "✓" : "✕"}</span>
-        <span className={legality.legal ? "text-success" : "text-danger"}>
-          {legality.legal ? "Legal for tournament play" : "Not currently legal"}
-        </span>
-      </div>
-      <div className="text-[11px] text-textMuted">
-        Draw {legality.drawCount}/{legality.requiredDraw} · Plot {legality.plotCount}/{legality.requiredPlots}
+      <div className="mb-2 text-xs font-semibold">Tournament Legality</div>
+      <div className="grid grid-cols-[1.4fr_0.8fr_0.8fr] gap-y-1.5 text-xs">
+        <div />
+        {FORMATS.map((format) => (
+          <div key={format} className="text-textMuted">
+            {FORMAT_LABEL[format]}
+          </div>
+        ))}
+        {listNames.map((listName) => (
+          <FormatRow key={listName} listName={listName} cells={tournamentLegality} />
+        ))}
       </div>
     </div>
+  );
+}
+
+function FormatRow({ listName, cells }: { listName: string; cells: TournamentLegalityCell[] }) {
+  return (
+    <>
+      <div>{listName}</div>
+      {FORMATS.map((format) => {
+        const cell = cells.find((c) => c.listName === listName && c.format === format);
+        return (
+          <div key={format} className={`font-semibold ${cell?.legal ? "text-success" : "text-danger"}`}>
+            {cell?.legal ? "✓" : "✕"}
+          </div>
+        );
+      })}
+    </>
   );
 }

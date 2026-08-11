@@ -1,6 +1,6 @@
 import type { Card, DeckCardEntry, DeckFormat } from "./types.js";
 import { AGENDA_RULES, type DeckCardCount } from "./data/agendaRules.js";
-import { CURRENT_RESTRICTED_LIST } from "./data/restrictedList.js";
+import { CURRENT_RESTRICTED_LIST, RESTRICTED_LISTS, type RestrictedList } from "./data/restrictedList.js";
 
 // Deck-building legality for AGoT 2e (Joust/Melee), ported from the reference
 // engine at throneteki/throneteki-deck-helper (same maintainers as our card
@@ -28,13 +28,17 @@ export interface LegalityResult {
   requiredPlots: number;
 }
 
-export function checkLegality(
-  format: DeckFormat,
-  factionCode: string,
-  agendaCode: string | null,
-  cards: DeckCardEntry[],
-  cardLookup: Map<string, Card>
-): LegalityResult {
+interface BaseLegality {
+  errors: string[];
+  warnings: string[];
+  drawCount: number;
+  plotCount: number;
+  requiredDraw: number;
+  requiredPlots: number;
+  resolved: DeckCardCount[];
+}
+
+function baseLegality(factionCode: string, agendaCode: string | null, cards: DeckCardEntry[], cardLookup: Map<string, Card>): BaseLegality {
   const errors: string[] = [];
   const warnings: string[] = [];
 
@@ -96,40 +100,94 @@ export function checkLegality(
     if (!rule.condition(drawCards, plotCards)) errors.push(rule.message);
   }
 
-  const restrictedFormat = CURRENT_RESTRICTED_LIST.formats.find((f) => f.name === format);
-  if (restrictedFormat) {
-    const uniqueCodes = new Set(resolved.map((d) => d.card.code));
-    const restrictedOnList = [...uniqueCodes].filter((code) => restrictedFormat.restricted.includes(code));
-    if (restrictedOnList.length > 1) {
-      const names = restrictedOnList.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
-      errors.push(`${CURRENT_RESTRICTED_LIST.name}: Contains more than 1 card on the restricted list: ${names}`);
-    }
+  return { errors, warnings, drawCount, plotCount, requiredDraw, requiredPlots, resolved };
+}
 
-    const bannedOnList = [...uniqueCodes].filter(
-      (code) => restrictedFormat.banned.includes(code) || CURRENT_RESTRICTED_LIST.bannedCards.includes(code)
-    );
-    if (bannedOnList.length > 0) {
-      const names = bannedOnList.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
-      errors.push(`${CURRENT_RESTRICTED_LIST.name}: Contains cards that are not tournament legal: ${names}`);
-    }
+function restrictedListErrors(
+  list: RestrictedList,
+  format: DeckFormat,
+  resolved: DeckCardCount[],
+  cardLookup: Map<string, Card>
+): string[] {
+  const errors: string[] = [];
+  const restrictedFormat = list.formats.find((f) => f.name === format);
+  if (!restrictedFormat) return errors;
 
-    for (const pod of restrictedFormat.pods) {
-      const onPod = [...uniqueCodes].filter((code) => pod.cards.includes(code));
-      if (onPod.length > 1) {
-        const names = onPod.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
-        errors.push(`${CURRENT_RESTRICTED_LIST.name}: ${names} cannot be used together`);
-      }
+  const uniqueCodes = new Set(resolved.map((d) => d.card.code));
+  const restrictedOnList = [...uniqueCodes].filter((code) => restrictedFormat.restricted.includes(code));
+  if (restrictedOnList.length > 1) {
+    const names = restrictedOnList.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
+    errors.push(`${list.name}: Contains more than 1 card on the restricted list: ${names}`);
+  }
+
+  const bannedOnList = [...uniqueCodes].filter(
+    (code) => restrictedFormat.banned.includes(code) || list.bannedCards.includes(code)
+  );
+  if (bannedOnList.length > 0) {
+    const names = bannedOnList.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
+    errors.push(`${list.name}: Contains cards that are not tournament legal: ${names}`);
+  }
+
+  for (const pod of restrictedFormat.pods) {
+    const onPod = [...uniqueCodes].filter((code) => pod.cards.includes(code));
+    if (onPod.length > 1) {
+      const names = onPod.map((code) => cardLookup.get(code)?.name ?? code).join(", ");
+      errors.push(`${list.name}: ${names} cannot be used together`);
     }
   }
+
+  return errors;
+}
+
+export function checkLegality(
+  format: DeckFormat,
+  factionCode: string,
+  agendaCode: string | null,
+  cards: DeckCardEntry[],
+  cardLookup: Map<string, Card>
+): LegalityResult {
+  const base = baseLegality(factionCode, agendaCode, cards, cardLookup);
+  const errors = [...base.errors, ...restrictedListErrors(CURRENT_RESTRICTED_LIST, format, base.resolved, cardLookup)];
 
   return {
     format,
     legal: errors.length === 0,
     errors,
-    warnings,
-    drawCount,
-    plotCount,
-    requiredDraw,
-    requiredPlots,
+    warnings: base.warnings,
+    drawCount: base.drawCount,
+    plotCount: base.plotCount,
+    requiredDraw: base.requiredDraw,
+    requiredPlots: base.requiredPlots,
   };
+}
+
+export interface TournamentLegalityCell {
+  listCode: string;
+  listName: string;
+  format: DeckFormat;
+  legal: boolean;
+}
+
+const TOURNAMENT_FORMATS: DeckFormat[] = ["joust", "melee"];
+
+export function checkTournamentLegality(
+  factionCode: string,
+  agendaCode: string | null,
+  cards: DeckCardEntry[],
+  cardLookup: Map<string, Card>
+): TournamentLegalityCell[] {
+  const base = baseLegality(factionCode, agendaCode, cards, cardLookup);
+  const cells: TournamentLegalityCell[] = [];
+  for (const list of RESTRICTED_LISTS) {
+    for (const format of TOURNAMENT_FORMATS) {
+      const errors = restrictedListErrors(list, format, base.resolved, cardLookup);
+      cells.push({
+        listCode: list.code,
+        listName: list.name,
+        format,
+        legal: base.errors.length === 0 && errors.length === 0,
+      });
+    }
+  }
+  return cells;
 }
