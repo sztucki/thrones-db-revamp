@@ -18,7 +18,7 @@ import { sql } from "drizzle-orm";
 import { db, pool } from "../db/client.js";
 import { cards, cycles, factions, importRuns, packs, types } from "../db/schema.js";
 import { config } from "../config.js";
-import { uploadCardImage } from "../services/blobStorage.js";
+import { findExistingCardImage, uploadCardImage } from "../services/blobStorage.js";
 
 const REPO = config.CARD_DATA_REPO_URL;
 const THRONESDB_API = config.THRONESDB_PUBLIC_API_URL;
@@ -170,6 +170,8 @@ async function resolveAndUploadImage(code: string, localImagePath: string | unde
       const contentType = CONTENT_TYPE_BY_EXT[extname(localImagePath).toLowerCase()] ?? "image/png";
       return await uploadCardImage(code, bytes, contentType);
     }
+    const existing = await findExistingCardImage(code);
+    if (existing) return existing;
     const remoteUrl = await lookupImageUrl(code);
     if (!remoteUrl) return null;
     const res = await fetch(remoteUrl);

@@ -23,3 +23,14 @@ export async function uploadCardImage(code: string, bytes: Buffer, contentType: 
   await blockBlobClient.uploadData(bytes, { blobHTTPHeaders: { blobContentType: contentType } });
   return blockBlobClient.url;
 }
+
+// The blob's extension isn't known up front (it depends on the source
+// image's content-type), so an existing upload for a card code can only be
+// found by listing with a `${code}.` prefix rather than a direct lookup.
+export async function findExistingCardImage(code: string): Promise<string | null> {
+  const container = await getContainerClient();
+  for await (const blob of container.listBlobsFlat({ prefix: `${code}.` })) {
+    return container.getBlockBlobClient(blob.name).url;
+  }
+  return null;
+}
