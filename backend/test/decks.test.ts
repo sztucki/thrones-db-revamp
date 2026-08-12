@@ -91,7 +91,12 @@ describe("decks service", () => {
     });
 
     const list = await listDecksForUser(OWNER_ID);
-    expect(list.map((d) => d.id)).toContain(deck.id);
+    expect(list.items.map((d) => d.id)).toContain(deck.id);
+    const listed = list.items.find((d) => d.id === deck.id);
+    expect(listed?.legal).toBe(false);
+    expect(listed?.drawCount).toBe(0);
+    expect(listed?.requiredDraw).toBe(60);
+    expect(listed?.tournamentLegality.length).toBeGreaterThan(0);
 
     const detail = await getDeckForUser(OWNER_ID, deck.id);
     expect(detail.legality.legal).toBe(false);

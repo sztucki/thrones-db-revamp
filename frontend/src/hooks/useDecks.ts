@@ -4,8 +4,8 @@ import { createDeck, deleteDeck, getDeck, listDecks, setDeckCard, updateDeck } f
 
 const deckKey = (id: string) => ["deck", id];
 
-export function useDecks(enabled = true) {
-  return useQuery({ queryKey: ["decks"], queryFn: listDecks, enabled });
+export function useDecks(params: { limit?: number; offset?: number } = {}, enabled = true) {
+  return useQuery({ queryKey: ["decks", params], queryFn: () => listDecks(params), enabled });
 }
 
 export function useDeck(id: string | undefined) {
@@ -35,7 +35,10 @@ export function useDeleteDeck() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteDeck(id),
-    onSuccess: (_data, id) => queryClient.removeQueries({ queryKey: deckKey(id) }),
+    onSuccess: (_data, id) => {
+      queryClient.removeQueries({ queryKey: deckKey(id) });
+      queryClient.invalidateQueries({ queryKey: ["decks"] });
+    },
   });
 }
 

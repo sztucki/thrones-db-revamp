@@ -1,11 +1,21 @@
 import { randomUUID } from "node:crypto";
-import { and, eq, inArray, sql } from "drizzle-orm";
-import type { Card, CardTypeCode, DeckCardEntry, DeckDetailResponse, DeckFormat, DeckSummary } from "@thronesdb/shared";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import type {
+  Card,
+  CardTypeCode,
+  DeckCardEntry,
+  DeckDetailResponse,
+  DeckFormat,
+  DeckListResult,
+} from "@thronesdb/shared";
 import { checkLegality, checkTournamentLegality } from "@thronesdb/shared";
 import { db } from "../db/client.js";
 import { cards, deckCards, decks } from "../db/schema.js";
 
 export class NotFoundError extends Error {}
+
+const DEFAULT_DECK_LIMIT = 20;
+const MAX_DECK_LIMIT = 100;
 
 function toCard(row: typeof cards.$inferSelect): Card {
   return {
@@ -34,32 +44,69 @@ export async function createDeck(
   return deck;
 }
 
-export async function listDecksForUser(userId: string): Promise<DeckSummary[]> {
-  const rows = await db
-    .select({
-      id: decks.id,
-      name: decks.name,
-      factionCode: decks.factionCode,
-      agendaCode: decks.agendaCode,
-      format: decks.format,
-      updatedAt: decks.updatedAt,
-      cardCount: sql<number>`coalesce(sum(${deckCards.count}), 0)::int`,
-    })
-    .from(decks)
-    .leftJoin(deckCards, eq(deckCards.deckId, decks.id))
-    .where(eq(decks.userId, userId))
-    .groupBy(decks.id)
-    .orderBy(decks.updatedAt);
+export async function listDecksForUser(
+  userId: string,
+  params: { limit?: number; offset?: number } = {}
+): Promise<DeckListResult> {
+  const limit = Math.min(params.limit ?? DEFAULT_DECK_LIMIT, MAX_DECK_LIMIT);
+  const offset = params.offset ?? 0;
 
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    factionCode: r.factionCode,
-    agendaCode: r.agendaCode,
-    format: r.format as DeckFormat,
-    cardCount: r.cardCount,
-    updatedAt: r.updatedAt.toISOString(),
-  }));
+  const [deckRows, totalRow] = await Promise.all([
+    db
+      .select()
+      .from(decks)
+      .where(eq(decks.userId, userId))
+      .orderBy(desc(decks.updatedAt))
+      .limit(limit)
+      .offset(offset),
+    db.select({ count: sql<number>`count(*)::int` }).from(decks).where(eq(decks.userId, userId)),
+  ]);
+
+  const deckIds = deckRows.map((d) => d.id);
+  const entries = deckIds.length
+    ? await db.select().from(deckCards).where(inArray(deckCards.deckId, deckIds))
+    : [];
+
+  const cardCodes = [...new Set(entries.map((e) => e.cardCode))];
+  const cardRows = cardCodes.length
+    ? await db.select().from(cards).where(inArray(cards.code, cardCodes))
+    : [];
+  const cardLookup = new Map(cardRows.map((row) => [row.code, toCard(row)]));
+
+  const entriesByDeck = new Map<string, DeckCardEntry[]>();
+  for (const e of entries) {
+    const list = entriesByDeck.get(e.deckId) ?? [];
+    list.push({ cardCode: e.cardCode, count: e.count });
+    entriesByDeck.set(e.deckId, list);
+  }
+
+  const items = deckRows.map((deck) => {
+    const deckEntries = entriesByDeck.get(deck.id) ?? [];
+    const cardCount = deckEntries.reduce((sum, e) => sum + e.count, 0);
+    const legality = checkLegality(
+      deck.format as DeckFormat,
+      deck.factionCode,
+      deck.agendaCode,
+      deckEntries,
+      cardLookup
+    );
+    const tournamentLegality = checkTournamentLegality(deck.factionCode, deck.agendaCode, deckEntries, cardLookup);
+    return {
+      id: deck.id,
+      name: deck.name,
+      factionCode: deck.factionCode,
+      agendaCode: deck.agendaCode,
+      format: deck.format as DeckFormat,
+      cardCount,
+      updatedAt: deck.updatedAt.toISOString(),
+      legal: legality.legal,
+      drawCount: legality.drawCount,
+      requiredDraw: legality.requiredDraw,
+      tournamentLegality,
+    };
+  });
+
+  return { items, total: totalRow[0]?.count ?? 0 };
 }
 
 async function loadOwnedDeck(userId: string, deckId: string) {

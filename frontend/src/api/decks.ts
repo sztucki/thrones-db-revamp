@@ -1,8 +1,12 @@
-import type { Deck, DeckDetailResponse, DeckFormat, DeckSummary } from "@thronesdb/shared";
+import type { Deck, DeckDetailResponse, DeckFormat, DeckListResult } from "@thronesdb/shared";
 import { apiFetch } from "./client.js";
 
-export function listDecks(): Promise<{ items: DeckSummary[] }> {
-  return apiFetch<{ items: DeckSummary[] }>("/decks");
+export function listDecks(params: { limit?: number; offset?: number } = {}): Promise<DeckListResult> {
+  const search = new URLSearchParams();
+  if (params.limit !== undefined) search.set("limit", String(params.limit));
+  if (params.offset !== undefined) search.set("offset", String(params.offset));
+  const qs = search.toString();
+  return apiFetch<DeckListResult>(`/decks${qs ? `?${qs}` : ""}`);
 }
 
 export function getDeck(id: string): Promise<DeckDetailResponse> {

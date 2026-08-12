@@ -30,9 +30,19 @@ const setCardSchema = z.object({
   count: z.coerce.number().int().min(0).max(10),
 });
 
+const listDecksQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  offset: z.coerce.number().int().min(0).optional(),
+});
+
 decksRouter.get("/decks", async (req, res) => {
-  const items = await listDecksForUser(req.user!.id);
-  res.json({ items });
+  const parsed = listDecksQuerySchema.safeParse(req.query);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid query parameters", details: parsed.error.flatten() });
+    return;
+  }
+  const result = await listDecksForUser(req.user!.id, parsed.data);
+  res.json(result);
 });
 
 decksRouter.post("/decks", async (req, res) => {

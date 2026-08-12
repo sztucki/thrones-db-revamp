@@ -1,15 +1,45 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSession } from "../hooks/useSession.js";
-import { useDecks } from "../hooks/useDecks.js";
+import { useDecks, useDeleteDeck } from "../hooks/useDecks.js";
 import { useFactions } from "../hooks/useFactions.js";
+import { useCardsByCode } from "../hooks/useCardsByCode.js";
+import { Pagination } from "../components/cards/Pagination.js";
+import { LegalityBox } from "../components/deckbuilder/LegalityBox.js";
+
+const PAGE_SIZE = 20;
 
 export function DecksListPage() {
   const sessionQuery = useSession();
-  const decksQuery = useDecks(!!sessionQuery.data?.user);
+  const [page, setPage] = useState(1);
+  const decksQuery = useDecks(
+    { limit: PAGE_SIZE, offset: (page - 1) * PAGE_SIZE },
+    !!sessionQuery.data?.user
+  );
   const factionsQuery = useFactions();
+  const deleteDeck = useDeleteDeck();
+
+  const agendaCodes = [
+    ...new Set((decksQuery.data?.items ?? []).map((d) => d.agendaCode).filter((code): code is string => !!code)),
+  ];
+  const agendaLookup = useCardsByCode(agendaCodes);
 
   const factionName = (code: string) =>
     factionsQuery.data?.items.find((f) => f.code === code)?.name ?? code;
+
+  const total = decksQuery.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+  useEffect(() => {
+    if (!decksQuery.isLoading && page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [decksQuery.isLoading, page, totalPages]);
+
+  function handleDelete(deckId: string, deckName: string) {
+    if (!confirm(`Delete "${deckName}"? This can't be undone.`)) return;
+    deleteDeck.mutate(deckId);
+  }
 
   if (sessionQuery.data && !sessionQuery.data.user) {
     return (
@@ -46,19 +76,42 @@ export function DecksListPage() {
       )}
 
       <div className="flex flex-col gap-2">
-        {decksQuery.data?.items.map((deck) => (
-          <Link
-            key={deck.id}
-            to={`/decks/${deck.id}/edit`}
-            className="flex items-center justify-between rounded border border-border px-4 py-3 text-[13px] hover:border-accent"
-          >
-            <span className="font-semibold">{deck.name}</span>
-            <span className="text-textMuted">
-              {factionName(deck.factionCode)} · {deck.cardCount} cards
-            </span>
-          </Link>
-        ))}
+        {decksQuery.data?.items.map((deck) => {
+          const agendaName = deck.agendaCode ? agendaLookup.get(deck.agendaCode)?.name : undefined;
+          return (
+            <div
+              key={deck.id}
+              className="rounded border border-border px-4 py-3 text-[13px] hover:border-accent"
+            >
+              <div className="mb-3 flex items-center justify-between gap-3">
+                <Link to={`/decks/${deck.id}/edit`} className="flex min-w-0 flex-1 items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="truncate font-semibold">{deck.name}</div>
+                    <div className="truncate text-textMuted">
+                      {factionName(deck.factionCode)}
+                      {agendaName ? ` · ${agendaName}` : ""}
+                    </div>
+                  </div>
+                  <div className={`flex-none font-semibold ${deck.legal ? "text-success" : "text-danger"}`}>
+                    {deck.drawCount}/{deck.requiredDraw} cards
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(deck.id, deck.name)}
+                  aria-label={`Delete ${deck.name}`}
+                  className="flex-none rounded-sm border border-danger/40 px-3 py-1.5 text-danger"
+                >
+                  Delete
+                </button>
+              </div>
+              <LegalityBox tournamentLegality={deck.tournamentLegality} />
+            </div>
+          );
+        })}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </div>
   );
 }

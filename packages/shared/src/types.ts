@@ -111,6 +111,15 @@ export interface DeckSummary {
   format: DeckFormat;
   cardCount: number;
   updatedAt: string;
+  legal: boolean;
+  drawCount: number;
+  requiredDraw: number;
+  tournamentLegality: import("./legality.js").TournamentLegalityCell[];
+}
+
+export interface DeckListResult {
+  items: DeckSummary[];
+  total: number;
 }
 
 export interface User {
