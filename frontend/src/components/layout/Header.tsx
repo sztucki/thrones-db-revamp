@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useSession } from "../../hooks/useSession.js";
 import { AccountMenu } from "../auth/AccountMenu.js";
 import { AuthModal } from "../auth/AuthModal.js";
@@ -18,7 +18,9 @@ export function Header() {
   return (
     <header className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-bg px-7 py-3.5">
       <div className="flex items-center gap-7">
-        <div className="text-[17px] font-bold tracking-tight">ThronesDB</div>
+        <Link to="/" className="text-[17px] font-bold tracking-tight">
+          ThronesDB
+        </Link>
         <nav className="flex gap-5 text-sm">
           {navItems.map((item) => (
             <NavLink
