@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { Card, CardTypeCode } from "@thronesdb/shared";
-import { useCardSearch } from "../hooks/useCardSearch.js";
+import { useCardBrowseQueries } from "../hooks/useCardBrowseQueries.js";
 import { useFactions } from "../hooks/useFactions.js";
 import { useTraits } from "../hooks/useTraits.js";
 import { usePacks } from "../hooks/usePacks.js";
@@ -11,7 +11,6 @@ import { CardSearchSidebar } from "../components/cards/CardSearchSidebar.js";
 import { CardGrid } from "../components/cards/CardGrid.js";
 import { CardDetailModal } from "../components/cards/CardDetailModal.js";
 import { Pagination } from "../components/cards/Pagination.js";
-import { splitTypeFilter } from "../lib/cardTypes.js";
 import { resolvePackCodeFilter } from "../lib/packFilters.js";
 
 const PAGE_SIZE = 40;
@@ -58,44 +57,23 @@ export function CardsSearchPage() {
   const traitsQuery = useTraits();
   const packsQuery = usePacks();
 
-  const { mainTypes, showPlots } = splitTypeFilter(activeTypes);
   const packsLoaded = packsQuery.data !== undefined;
   const packCode = resolvePackCodeFilter(packsQuery.data?.items ?? [], activePacks, activeVariantPacks);
 
-  const sharedFilters = {
-    q: debouncedQuery || undefined,
-    faction: activeFactions.length ? activeFactions : undefined,
-    traits: activeTraits.length ? activeTraits : undefined,
-    packCode,
-    unique: activeIcons.includes("unique") || undefined,
-    loyal: activeIcons.includes("loyal") || undefined,
-    military: activeIcons.includes("military") || undefined,
-    intrigue: activeIcons.includes("intrigue") || undefined,
-    power: activeIcons.includes("power") || undefined,
-    costMin,
-    costMax,
-  };
-
-  const searchQuery = useCardSearch(
+  const { showPlots, searchQuery, plotQuery } = useCardBrowseQueries(
     {
-      ...sharedFilters,
-      type: mainTypes,
+      q: debouncedQuery || undefined,
+      faction: activeFactions.length ? activeFactions : undefined,
+      traits: activeTraits.length ? activeTraits : undefined,
+      packCode,
+      icons: activeIcons,
+      costMin,
+      costMax,
       sortDir,
-      limit: PAGE_SIZE,
-      offset: (page - 1) * PAGE_SIZE,
     },
-    { enabled: mainTypes.length > 0 && packsLoaded }
-  );
-
-  const plotQuery = useCardSearch(
-    {
-      ...sharedFilters,
-      type: ["plot"],
-      sortDir,
-      limit: PLOT_PAGE_SIZE,
-      offset: (plotPage - 1) * PLOT_PAGE_SIZE,
-    },
-    { enabled: showPlots && packsLoaded }
+    activeTypes,
+    { page, plotPage, pageSize: PAGE_SIZE, plotPageSize: PLOT_PAGE_SIZE },
+    packsLoaded
   );
 
   function updateParams(next: {

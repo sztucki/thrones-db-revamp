@@ -2,7 +2,6 @@ import { Router } from "express";
 import { z } from "zod";
 import { requireAuth } from "../middleware/requireAuth.js";
 import {
-  NotFoundError,
   createDeck,
   deleteDeck,
   getDeckForUser,
@@ -52,16 +51,8 @@ decksRouter.post("/decks", async (req, res) => {
 });
 
 decksRouter.get("/decks/:id", async (req, res) => {
-  try {
-    const deck = await getDeckForUser(req.user!.id, req.params.id);
-    res.json(deck);
-  } catch (err) {
-    if (err instanceof NotFoundError) {
-      res.status(404).json({ error: err.message });
-      return;
-    }
-    throw err;
-  }
+  const deck = await getDeckForUser(req.user!.id, req.params.id);
+  res.json(deck);
 });
 
 decksRouter.patch("/decks/:id", async (req, res) => {
@@ -70,30 +61,14 @@ decksRouter.patch("/decks/:id", async (req, res) => {
     res.status(400).json({ error: "Invalid deck data", details: parsed.error.flatten() });
     return;
   }
-  try {
-    await updateDeck(req.user!.id, req.params.id, parsed.data);
-    const deck = await getDeckForUser(req.user!.id, req.params.id);
-    res.json(deck);
-  } catch (err) {
-    if (err instanceof NotFoundError) {
-      res.status(404).json({ error: err.message });
-      return;
-    }
-    throw err;
-  }
+  await updateDeck(req.user!.id, req.params.id, parsed.data);
+  const deck = await getDeckForUser(req.user!.id, req.params.id);
+  res.json(deck);
 });
 
 decksRouter.delete("/decks/:id", async (req, res) => {
-  try {
-    await deleteDeck(req.user!.id, req.params.id);
-    res.status(204).end();
-  } catch (err) {
-    if (err instanceof NotFoundError) {
-      res.status(404).json({ error: err.message });
-      return;
-    }
-    throw err;
-  }
+  await deleteDeck(req.user!.id, req.params.id);
+  res.status(204).end();
 });
 
 decksRouter.put("/decks/:id/cards/:cardCode", async (req, res) => {
@@ -102,15 +77,7 @@ decksRouter.put("/decks/:id/cards/:cardCode", async (req, res) => {
     res.status(400).json({ error: "Invalid card count", details: parsed.error.flatten() });
     return;
   }
-  try {
-    await setDeckCard(req.user!.id, req.params.id, req.params.cardCode, parsed.data.count);
-    const deck = await getDeckForUser(req.user!.id, req.params.id);
-    res.json(deck);
-  } catch (err) {
-    if (err instanceof NotFoundError) {
-      res.status(404).json({ error: err.message });
-      return;
-    }
-    throw err;
-  }
+  await setDeckCard(req.user!.id, req.params.id, req.params.cardCode, parsed.data.count);
+  const deck = await getDeckForUser(req.user!.id, req.params.id);
+  res.json(deck);
 });

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AGENDA_RULES, type Card, type CardTypeCode, type DeckDetailResponse } from "@thronesdb/shared";
-import { useCardSearch } from "../../hooks/useCardSearch.js";
+import { useCardBrowseQueries } from "../../hooks/useCardBrowseQueries.js";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue.js";
 import { useCardsByCode } from "../../hooks/useCardsByCode.js";
 import { useFactions } from "../../hooks/useFactions.js";
@@ -12,7 +12,6 @@ import { CardGrid } from "../cards/CardGrid.js";
 import { CardSearchSidebar } from "../cards/CardSearchSidebar.js";
 import { CardDetailModal } from "../cards/CardDetailModal.js";
 import { Pagination } from "../cards/Pagination.js";
-import { splitTypeFilter } from "../../lib/cardTypes.js";
 import { resolvePackCodeFilter } from "../../lib/packFilters.js";
 import { DeckList } from "./DeckList.js";
 import { LegalityBox } from "./LegalityBox.js";
@@ -43,42 +42,22 @@ export function BuildStepLayout({ deck, houseName }: { deck: DeckDetailResponse;
   const traitsQuery = useTraits();
   const packsQuery = usePacks();
 
-  const { mainTypes, showPlots } = splitTypeFilter(activeTypes);
   const packsLoaded = packsQuery.data !== undefined;
   const packCode = resolvePackCodeFilter(packsQuery.data?.items ?? [], activePacks, activeVariantPacks);
 
-  const sharedFilters = {
-    q: debouncedQuery || undefined,
-    faction: activeFactions.length ? activeFactions : undefined,
-    traits: activeTraits.length ? activeTraits : undefined,
-    packCode,
-    unique: activeIcons.includes("unique") || undefined,
-    loyal: activeIcons.includes("loyal") || undefined,
-    military: activeIcons.includes("military") || undefined,
-    intrigue: activeIcons.includes("intrigue") || undefined,
-    power: activeIcons.includes("power") || undefined,
-    costMin,
-    costMax,
-  };
-
-  const searchQuery = useCardSearch(
+  const { showPlots, searchQuery, plotQuery } = useCardBrowseQueries(
     {
-      ...sharedFilters,
-      type: mainTypes,
-      limit: PAGE_SIZE,
-      offset: (page - 1) * PAGE_SIZE,
+      q: debouncedQuery || undefined,
+      faction: activeFactions.length ? activeFactions : undefined,
+      traits: activeTraits.length ? activeTraits : undefined,
+      packCode,
+      icons: activeIcons,
+      costMin,
+      costMax,
     },
-    { enabled: mainTypes.length > 0 && packsLoaded }
-  );
-
-  const plotQuery = useCardSearch(
-    {
-      ...sharedFilters,
-      type: ["plot"],
-      limit: PLOT_PAGE_SIZE,
-      offset: (plotPage - 1) * PLOT_PAGE_SIZE,
-    },
-    { enabled: showPlots && packsLoaded }
+    activeTypes,
+    { page, plotPage, pageSize: PAGE_SIZE, plotPageSize: PLOT_PAGE_SIZE },
+    packsLoaded
   );
 
   const setCard = useSetDeckCard(deck.id);

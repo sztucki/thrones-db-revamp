@@ -1,5 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:4000/api";
 
+export class ApiError extends Error {}
+
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     credentials: "include",
@@ -7,7 +9,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> 
     ...init,
   });
   if (!res.ok) {
-    throw new Error(`API error ${res.status}: ${await res.text()}`);
+    const data = await res.json().catch(() => ({}));
+    throw new ApiError(data.error ?? `Request failed (${res.status})`);
   }
   if (res.status === 204) {
     return undefined as T;
