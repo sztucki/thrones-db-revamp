@@ -4,6 +4,7 @@ import { CardsSearchPage } from "./pages/CardsSearchPage.js";
 import { DeckBuilderPage } from "./pages/DeckBuilderPage.js";
 import { DecksListPage } from "./pages/DecksListPage.js";
 import { ComingSoonPage } from "./pages/ComingSoonPage.js";
+import { RulesPage } from "./pages/RulesPage.js";
 
 export const router = createBrowserRouter([
   {
@@ -16,7 +17,7 @@ export const router = createBrowserRouter([
       { path: "decks/:id/edit", element: <DeckBuilderPage /> },
       { path: "decks", element: <DecksListPage /> },
       { path: "reviews", element: <ComingSoonPage title="Reviews" /> },
-      { path: "rules", element: <ComingSoonPage title="Rules" /> },
+      { path: "rules", element: <RulesPage /> },
     ],
   },
 ]);
