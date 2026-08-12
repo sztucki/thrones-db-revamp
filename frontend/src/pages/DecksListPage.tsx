@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AGENDA_RULES } from "@thronesdb/shared";
 import { useSession } from "../hooks/useSession.js";
 import { useDecks, useDeleteDeck } from "../hooks/useDecks.js";
 import { useFactions } from "../hooks/useFactions.js";
@@ -8,6 +9,25 @@ import { Pagination } from "../components/cards/Pagination.js";
 import { LegalityBox } from "../components/deckbuilder/LegalityBox.js";
 
 const PAGE_SIZE = 20;
+
+const FACTION_BANNER_CODE: Record<string, string> = Object.fromEntries(
+  Object.entries(AGENDA_RULES)
+    .filter(([, rule]) => rule.bannerFaction)
+    .map(([code, rule]) => [rule.bannerFaction!, code])
+);
+
+function CardThumbnail({ imageUrl, alt }: { imageUrl: string | null | undefined; alt: string }) {
+  return imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={alt}
+      className="h-28 w-20 flex-none rounded-sm bg-bg object-contain"
+      loading="lazy"
+    />
+  ) : (
+    <div className="h-28 w-20 flex-none rounded-sm bg-[repeating-linear-gradient(45deg,oklch(0.92_0.006_250),oklch(0.92_0.006_250)_6px,oklch(0.96_0.004_250)_6px,oklch(0.96_0.004_250)_12px)]" />
+  );
+}
 
 export function DecksListPage() {
   const sessionQuery = useSession();
@@ -19,10 +39,15 @@ export function DecksListPage() {
   const factionsQuery = useFactions();
   const deleteDeck = useDeleteDeck();
 
-  const agendaCodes = [
-    ...new Set((decksQuery.data?.items ?? []).map((d) => d.agendaCode).filter((code): code is string => !!code)),
+  const items = decksQuery.data?.items ?? [];
+  const cardCodes = [
+    ...new Set(
+      items
+        .flatMap((d) => [d.agendaCode, FACTION_BANNER_CODE[d.factionCode]])
+        .filter((code): code is string => !!code)
+    ),
   ];
-  const agendaLookup = useCardsByCode(agendaCodes);
+  const cardLookup = useCardsByCode(cardCodes);
 
   const factionName = (code: string) =>
     factionsQuery.data?.items.find((f) => f.code === code)?.name ?? code;
@@ -76,20 +101,25 @@ export function DecksListPage() {
       )}
 
       <div className="flex flex-col gap-2">
-        {decksQuery.data?.items.map((deck) => {
-          const agendaName = deck.agendaCode ? agendaLookup.get(deck.agendaCode)?.name : undefined;
+        {items.map((deck) => {
+          const bannerCard = FACTION_BANNER_CODE[deck.factionCode]
+            ? cardLookup.get(FACTION_BANNER_CODE[deck.factionCode])
+            : undefined;
+          const agendaCard = deck.agendaCode ? cardLookup.get(deck.agendaCode) : undefined;
           return (
             <div
               key={deck.id}
               className="rounded border border-border px-4 py-3 text-[13px] hover:border-accent"
             >
               <div className="mb-3 flex items-center justify-between gap-3">
-                <Link to={`/decks/${deck.id}/edit`} className="flex min-w-0 flex-1 items-center justify-between gap-3">
-                  <div className="min-w-0">
+                <Link to={`/decks/${deck.id}/edit`} className="flex min-w-0 flex-1 items-center gap-3">
+                  <CardThumbnail imageUrl={bannerCard?.imageUrl} alt={factionName(deck.factionCode)} />
+                  <CardThumbnail imageUrl={agendaCard?.imageUrl} alt={agendaCard?.name ?? "No agenda"} />
+                  <div className="min-w-0 flex-1">
                     <div className="truncate font-semibold">{deck.name}</div>
                     <div className="truncate text-textMuted">
                       {factionName(deck.factionCode)}
-                      {agendaName ? ` · ${agendaName}` : ""}
+                      {agendaCard ? ` · ${agendaCard.name}` : ""}
                     </div>
                   </div>
                   <div className={`flex-none font-semibold ${deck.legal ? "text-success" : "text-danger"}`}>
